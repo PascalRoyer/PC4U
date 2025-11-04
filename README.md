@@ -1,5 +1,5 @@
 
-# PC4U version - Équipe 19
+# PC4U - Équipe 19
 
 ## Description
 Application web développée dans le cadre du cours INF1763.
