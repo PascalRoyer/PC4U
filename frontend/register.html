@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PC4U – Register</title>
+  <link rel="stylesheet" href="./style/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="header-brand" href="./index.html">
+        <img src="./assets/img/log3.png" alt="PC4U" />
+        <span>PC4U</span>
+      </a>
+      <nav class="nav">
+        <a href="./index.html">Accueil</a>
+        <a href="./products.html">Produits</a>
+        <a href="./login.html">Log in</a>
+        <a href="./register.html" aria-current="page">Register</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="card" aria-labelledby="title">
+      <h1 id="title">Créer un compte</h1>
+      <p class="subtle">Rejoins-nous pour construire ton PC sur mesure.</p>
+
+      <form id="registerForm" autocomplete="on" novalidate>
+        <div class="form-field">
+          <label for="pseudo">Pseudo</label>
+          <input id="pseudo" name="user_pseudo" type="text" placeholder="Ex. gamerX" required />
+        </div>
+
+        <div class="form-field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="nom@exemple.com" required />
+        </div>
+
+        <div class="form-field">
+          <label for="password">Mot de passe</label>
+          <input id="password" name="user_password" type="password" placeholder="••••••••" required minlength="6" />
+        </div>
+
+        <button class="btn btn-primary pulse" type="submit">Créer mon compte</button>
+
+        <p class="center" style="margin-top:14px">
+          Déjà inscrit ? <a class="link" href="./login.html">Se connecter</a>
+        </p>
+      </form>
+    </section>
+  </main>
+
+  <footer>© PC4U — Tous droits réservés.</footer>
+
+  <script>
+    const form = document.getElementById("registerForm");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const user_pseudo = form.user_pseudo.value.trim();
+      const email = form.email.value.trim();
+      const user_password = form.user_password.value;
+
+      if (!user_pseudo || !email || !user_password) {
+        return alert("Tous les champs sont obligatoires.");
+      }
+
+      try {
+        const res = await fetch("/api/auth/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_pseudo, email, user_password })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Inscription impossible");
+
+        alert("Compte créé ! Connecte-toi maintenant.");
+        window.location.href = "./login.html";
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+  </script>
+</body>
+</html>

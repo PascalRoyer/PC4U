@@ -1,16 +1,85 @@
-<!DOCTYPE html>
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PC4U – Login</title>
+  <link rel="stylesheet" href="./style/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="header-brand" href="./index.html">
+        <img src="./assets/img/log3.png" alt="PC4U" />
+        <span>PC4U</span>
+      </a>
+      <nav class="nav">
+        <a href="./index.html">Accueil</a>
+        <a href="./products.html">Produits</a>
+        <a href="./login.html" aria-current="page">Log in</a>
+        <a href="./register.html">Register</a>
+      </nav>
+    </div>
+  </header>
 
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="/style/style.css">
-    </head>
-    <body>
-       
-        <script src="" async defer></script>
-    </body>
+  <main>
+    <section class="card" aria-labelledby="title">
+      <h1 id="title">Login</h1>
+      <p class="subtle">Connecte-toi pour continuer ta commande.</p>
+
+      <form id="loginForm" autocomplete="on" novalidate>
+        <div class="form-field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" placeholder="nom@exemple.com" required />
+        </div>
+
+        <div class="form-field">
+          <label for="password">Mot de passe</label>
+          <input id="password" name="user_password" type="password" placeholder="••••••••" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary pulse">Se connecter</button>
+
+        <p class="center" style="margin-top:14px">
+          Pas de compte ? <a class="link" href="./register.html">Créer un compte</a>
+        </p>
+      </form>
+    </section>
+  </main>
+
+  <footer>© PC4U — Tous droits réservés.</footer>
+
+  <script>
+    const form = document.getElementById("loginForm");
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = form.email.value.trim();
+      const user_password = form.user_password.value;
+
+      if (!email || !user_password) {
+        return alert("Email et mot de passe requis.");
+      }
+
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, user_password })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Erreur de connexion");
+
+        if (data.token) localStorage.setItem("pc4u_token", data.token);
+        if (data.user)  localStorage.setItem("pc4u_user", JSON.stringify(data.user));
+
+        alert("Connexion réussie ");
+        window.location.href = "./index.html";
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+  </script>
+</body>
 </html>
