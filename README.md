@@ -6,7 +6,7 @@ Application web développée dans le cadre du cours INF1763.
 - Brahim Thiam
 - Sory Fofana
 - Daniel Sekloka
-- Ali Baziz
+- Sid Ali-Rayane Baziz
 
 ## Technologies
 - HTML5, CSS3, JavaScript, 
