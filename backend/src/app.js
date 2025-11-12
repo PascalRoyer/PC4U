@@ -2,6 +2,8 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const prebuiltRoutes = require('./routes/prebuilt');
+
 require('dotenv').config();
 
 // Connexion SQL
@@ -24,6 +26,8 @@ app.get('/api/health', (_, res) => {
   res.json({ ok: true, message: 'API + DB opérationnelles ' });
 });
 app.use('/api/auth', authRoutes);
+app.use('/api/prebuilt', prebuiltRoutes);
+
 
 // Frontend statique
 const FRONTEND_DIR = path.join(__dirname, '../../frontend');
