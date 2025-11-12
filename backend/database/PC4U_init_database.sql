@@ -1,4 +1,4 @@
-USE PC4U; /* Créer une base de données nommée PC4U au préalable */
+USE PC4U; /* Crï¿½er une base de donnï¿½es nommï¿½e PC4U au prï¿½alable */
 CREATE TABLE UserTypes (
 	user_type_id TINYINT NOT NULL PRIMARY KEY,
 	type_names NVARCHAR(50) NOT NULL UNIQUE
@@ -57,3 +57,21 @@ CREATE TABLE Transaction_Details (
 	FOREIGN KEY (transaction_id) REFERENCES Transactions(transaction_id),
 	FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
+CREATE TABLE Templates (
+  template_id INT IDENTITY(1,1) PRIMARY KEY,
+  template_name NVARCHAR(100) NOT NULL,
+  user_id_number BIGINT NOT NULL,
+  total_price DECIMAL(10,2) NOT NULL CHECK (total_price >= 0),
+  created_at DATETIME2 DEFAULT GETDATE(),
+  FOREIGN KEY (user_id_number) REFERENCES Users(user_id_number)
+);
+
+CREATE TABLE TemplateComponents (
+  component_id INT IDENTITY(1,1) PRIMARY KEY,
+  template_id INT NOT NULL,
+  component_name NVARCHAR(100) NOT NULL,
+  selected_option NVARCHAR(100),
+  price DECIMAL(10,2) NOT NULL CHECK (price >= 0),
+  FOREIGN KEY (template_id) REFERENCES Templates(template_id)
+);
+
