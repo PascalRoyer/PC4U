@@ -21,7 +21,7 @@ CREATE TABLE Categories (
 
 CREATE TABLE Products (
 	product_id BIGINT IDENTITY(1,1) NOT NULL PRIMARY KEY,
-	product_name NVARCHAR(100) NOT NULL,
+	product_name NVARCHAR(MAX) NOT NULL,
 	category_id INT NOT NULL,
 	product_price DECIMAL(10,2) NOT NULL CHECK (product_price >= 0),
 	stock INT NOT NULL CHECK (stock >= 0),
@@ -70,12 +70,12 @@ CREATE TABLE dbo.Staging_CPU (
 
 CREATE TABLE CPU_Specs (
   product_id BIGINT NOT NULL PRIMARY KEY,
-  core_count INT NOT NULL,
-  core_clock_ghz DECIMAL(6,3) NOT NULL,
-  boost_clock_ghz DECIMAL(6,3) NOT NULL,
-  microarchitecture NVARCHAR(200) NOT NULL,
-  tdp_watts INT NOT NULL,
-  graphics NVARCHAR(200) NOT NULL
+  core_count INT NULL,
+  core_clock_ghz DECIMAL(6,3) NULL,
+  boost_clock_ghz DECIMAL(6,3) NULL,
+  microarchitecture NVARCHAR(200) NULL,
+  tdp_watts INT NULL,
+  graphics NVARCHAR(200) NULL
   FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
 
@@ -92,11 +92,11 @@ CREATE TABLE dbo.Staging_GPU (
 
 CREATE TABLE GPU_Specs (
   product_id BIGINT NOT NULL PRIMARY KEY,
-  chipset NVARCHAR(100) NOT NULL,
-  memory NVARCHAR(50) NOT NULL,
-  core_clock INT NOT NULL,
-  boost_clock INT NOT NULL,
-  color NVARCHAR(50) NOT NULL,
+  chipset NVARCHAR(100) NULL,
+  memory NVARCHAR(50) NULL,
+  core_clock INT NULL,
+  boost_clock INT NULL,
+  color NVARCHAR(50) NULL,
   length INT NOT NULL
   FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
@@ -114,12 +114,12 @@ CREATE TABLE dbo.Staging_Monitors (
 
 CREATE TABLE Monitor_Specs (
   product_id BIGINT NOT NULL PRIMARY KEY,
-  screen_size INT NOT NULL,
-  resolution NVARCHAR(50) NOT NULL,
+  screen_size INT NULL,
+  resolution NVARCHAR(400) NOT NULL,
   refresh_rate NVARCHAR(50) NOT NULL,
-  response_time INT NOT NULL,
+  response_time DECIMAL(5,2) NOT NULL,
   panel_type NVARCHAR(50) NOT NULL,
-  aspect_ratio INT NOT NULL
+  aspect_ratio NVARCHAR(20) NULL
   FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
 
@@ -140,7 +140,7 @@ CREATE TABLE Memory_Specs (
   modules NVARCHAR(50) NOT NULL,
   price_per_gb DECIMAL(10,2) NOT NULL,
   color NVARCHAR(50) NOT NULL,
-  first_word_latency INT NOT NULL,
+  first_word_latency INT NULL,
   cas_latency INT NOT NULL
   FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
