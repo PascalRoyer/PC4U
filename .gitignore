@@ -1,3 +1,8 @@
 node_modules/
+
 .env
+
 .vs/
+*.suo
+*.sqlite
+*.json
