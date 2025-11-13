@@ -116,9 +116,9 @@ CREATE TABLE Monitor_Specs (
   product_id BIGINT NOT NULL PRIMARY KEY,
   screen_size INT NULL,
   resolution NVARCHAR(400) NOT NULL,
-  refresh_rate NVARCHAR(50) NOT NULL,
-  response_time DECIMAL(5,2) NOT NULL,
-  panel_type NVARCHAR(50) NOT NULL,
+  refresh_rate NVARCHAR(50) NULL,
+  response_time DECIMAL(5,2) NULL,
+  panel_type NVARCHAR(50) NULL,
   aspect_ratio NVARCHAR(20) NULL
   FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
@@ -136,10 +136,10 @@ CREATE TABLE dbo.Staging_Memory (
 
 CREATE TABLE Memory_Specs (
   product_id BIGINT NOT NULL PRIMARY KEY,
-  speed INT NOT NULL,
+  speed INT NULL,
   modules NVARCHAR(50) NOT NULL,
-  price_per_gb DECIMAL(10,2) NOT NULL,
-  color NVARCHAR(50) NOT NULL,
+  price_per_gb DECIMAL(10,2) NULL,
+  color NVARCHAR(50) NULL,
   first_word_latency INT NULL,
   cas_latency INT NOT NULL
   FOREIGN KEY (product_id) REFERENCES Products(product_id)
@@ -158,10 +158,10 @@ CREATE TABLE dbo.Staging_Hard_Drive (
 CREATE TABLE Hard_Drive_Specs (
   product_id BIGINT NOT NULL PRIMARY KEY,
   type NVARCHAR(50) NOT NULL,
-  interface NVARCHAR(100) NOT NULL,
+  interface NVARCHAR(100) NULL,
   capacity INT NOT NULL,
-  price_per_gb DECIMAL(10,2) NOT NULL,
-  color NVARCHAR(50) NOT NULL
+  price_per_gb DECIMAL(10,2) NULL,
+  color NVARCHAR(50) NULL
   FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
 
@@ -178,10 +178,10 @@ CREATE TABLE dbo.Staging_Power_Supply (
 CREATE TABLE Power_supply_Specs (
   product_id BIGINT NOT NULL PRIMARY KEY,
   type NVARCHAR(50) NOT NULL,
-  efficiency NVARCHAR(50) NOT NULL,
+  efficiency NVARCHAR(50) NULL,
   wattage INT NOT NULL,
   modular NVARCHAR(50) NOT NULL,
-  color NVARCHAR(50) NOT NULL
+  color NVARCHAR(50) NULL
   FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
 
@@ -198,9 +198,9 @@ CREATE TABLE dbo.Staging_Cases (
 CREATE TABLE Case_Specs (
   product_id BIGINT NOT NULL PRIMARY KEY,
   type NVARCHAR(50) NOT NULL,
-  color NVARCHAR(50) NOT NULL,
-  side_panel NVARCHAR(100) NOT NULL,
-  external_volume DECIMAL(4,2) NOT NULL,
+  color NVARCHAR(50) NULL,
+  side_panel NVARCHAR(100) NULL,
+  external_volume DECIMAL(4,2) NULL,
   internal_35_bays INT NOT NULL
   FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
@@ -221,7 +221,24 @@ CREATE TABLE Motherboard_Specs (
   form_factor NVARCHAR(50) NOT NULL,
   max_memory INT NOT NULL,
   memory_slots INT NOT NULL,
-  color NVARCHAR(50) NOT NULL
+  color NVARCHAR(50) NULL
   FOREIGN KEY (product_id) REFERENCES Products(product_id)
 );
 
+CREATE TABLE Templates (
+  template_id INT IDENTITY(1,1) PRIMARY KEY,
+  template_name NVARCHAR(100) NOT NULL,
+  user_id_number BIGINT NOT NULL,
+  total_price DECIMAL(10,2) NOT NULL CHECK (total_price >= 0),
+  created_at DATETIME2 DEFAULT GETDATE(),
+  FOREIGN KEY (user_id_number) REFERENCES Users(user_id_number)
+);
+
+CREATE TABLE TemplateComponents (
+  component_id INT IDENTITY(1,1) PRIMARY KEY,
+  template_id INT NOT NULL,
+  component_name NVARCHAR(100) NOT NULL,
+  selected_option NVARCHAR(100),
+  price DECIMAL(10,2) NOT NULL CHECK (price >= 0),
+  FOREIGN KEY (template_id) REFERENCES Templates(template_id)
+);

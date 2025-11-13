@@ -36,10 +36,13 @@ Ici sont détaillées les instructions pour insérer les fichiers csv dans votre
         Clic droit sur PC4U dans SSMS > Tasks > Import Data > Data source
         Choisir Flat file source > Sélectionner le fichier 
         Pour le code page, le 1252 (ANSI Latin I) est correct, mais pour certains
-        fichier il faudra sélectionner le 65001 (UTF-8).
-        Pour le text qualifier, utiliser " pour les fichiers semicolon.
+        fichiers il faudra sélectionner le 65001 (UTF-8).
+        Pour le text qualifier, utiliser " pour les fichiers semicolon ainsi que le
+        fichier external-hard-drive.csv.
         Dans la section advanced, changer le data type de la colonne (généralement
-        le cas pour name) à Unicode string [DT WSTR] et l'output à >400
+        le cas pour name) à Unicode string [DT WSTR] et l'output à >400. Pour le fichier
+        external hard drive encore une fois, include la colonne "interface" pour ces 
+        paramètres.
         Choisir Microsoft OLE DB Provider for SQL Server et choisir PC4U comme 
         bd puis changer le nom dans la table pour Stating_XXX tel que dans le init,
         sinon un nouveau fichier sera créé.
@@ -51,13 +54,22 @@ Ici sont détaillées les instructions pour insérer les fichiers csv dans votre
         UPDATE dbo.Staging_Monitors
         SET resolution = 
             CASE
-                WHEN resolution LIKE '19,201,080' THEN '1920x1080'
-                WHEN resolution LIKE '25,601,440' THEN '2560x1440'
-                WHEN resolution LIKE '38,402,160' THEN '3840x2160'
-                WHEN resolution LIKE '51,201,440' THEN '5120x1440'
-                WHEN resolution LIKE '76,802,160' THEN '7680x2160'
+                WHEN resolution LIKE '19201080' THEN '1920x1080'
+                WHEN resolution LIKE '25601440' THEN '2560x1440'
+                WHEN resolution LIKE '38402160' THEN '3840x2160'
+                WHEN resolution LIKE '51201440' THEN '5120x1440'
+                WHEN resolution LIKE '76802160' THEN '7680x2160'
                 WHEN resolution LIKE '38401600' THEN '3840x1600'
                 WHEN resolution LIKE '34401440' THEN '3440x1440'
+				WHEN resolution LIKE '25601024' THEN '2560x1024'
+				WHEN resolution LIKE '19201920' THEN '1920x1920'
+				WHEN resolution LIKE '20481536' THEN '2048x1536'
+				WHEN resolution LIKE '25602880' THEN '2560x2880'
+				WHEN resolution LIKE '38401080' THEN '3840x1080'
+				WHEN resolution LIKE '38401200' THEN '3840x1200'
+				WHEN resolution LIKE '38402560' THEN '3840x2560'
+				WHEN resolution LIKE '40962160' THEN '4096x2160'
+				WHEN resolution LIKE '51202880' THEN '5120x2880'
                 WHEN resolution LIKE '25601080' THEN '2560x1080'
 				WHEN resolution LIKE '25601600' THEN '2560x1600'
                 WHEN resolution LIKE '1366768' THEN '1366x768'
