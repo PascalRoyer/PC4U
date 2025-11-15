@@ -7,6 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="./style/style.css" />
   </head>
+  <!-- Modal pour afficher les templates -->
+  <div id="templates-modal" class="modal hidden">
+    <div class="modal-content">
+      <span id="close-modal" class="close-btn">&times;</span>
+      <h3>Templates</h3>
+      <div id="templates-container"></div>
+    </div>
+  </div>
 
   <body>
     <header class="site-header">
@@ -24,14 +32,18 @@
     </header>
 
    <main class="configurator">
-      <section class="intro">
-        <h1>Bienvenue sur le configurateur PC4U</h1>
-        <p>Sélectionne les composants pour créer ton PC sur mesure.</p>
+     <section class="intro">
+       <h1>Bienvenue sur le configurateur PC4U</h1>
+       <p>Sélectionne les composants pour créer ton PC sur mesure.</p>
       </section>
-
+      
       <section class="table-section">
         <h2>Choisis tes pièces</h2>
-
+        <div class="template-buttons">
+          <button id="show-templates-btn" class="template-btn">📂 Voir les templates</button>
+          <button id="save-template-btn" class="template-btn">➕ Ajouter un template</button>
+        </div>
+        
         <table class="config-table">
           <thead>
             <tr>
@@ -111,42 +123,218 @@
         <div class="total">
           <strong>Total :</strong> <span id="total-price">0 $</span>
         </div>
+
       </section>
     </main>
 
     <footer>© PC4U — Tous droits réservés.</footer>
 
     <script>
-     
 
-      const buttons = document.querySelectorAll(".select-btn");
-      const totalPriceEl = document.getElementById("total-price");
+      // -------------------------------
+// Gestion des sélections et calcul du total
+// -------------------------------
+const buttons = document.querySelectorAll(".select-btn");
+const totalPriceEl = document.getElementById("total-price");
 
-      function updateTotal() {
-        let total = 0;
-        document.querySelectorAll("tr[data-component]").forEach(row => {
-          const active = row.querySelector(".select-btn.active");
-          if (active) {
+function updateTotal() {
+    let total = 0;
+    document.querySelectorAll("tr[data-component]").forEach(row => {
+        const active = row.querySelector(".select-btn.active");
+        if (active) {
             total += parseFloat(active.dataset.price);
             row.querySelector(".price").textContent = active.dataset.price + " $";
-          } else {
+        } else {
             row.querySelector(".price").textContent = "$0";
-          }
-        });
+        }
+    });
+    totalPriceEl.textContent = total.toFixed(2) + " $";
+    totalPriceEl.classList.add("glow");
+    setTimeout(() => totalPriceEl.classList.remove("glow"), 400);
+}
 
-        totalPriceEl.textContent = total.toFixed(2) + " $";
-        totalPriceEl.classList.add("glow");
-        setTimeout(() => totalPriceEl.classList.remove("glow"), 400);
-      }
+buttons.forEach(btn => {
+    btn.addEventListener("click", () => {
+        const group = btn.closest(".option-group");
+        group.querySelectorAll(".select-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        updateTotal();
+    });
+});
 
-      buttons.forEach(btn => {
-        btn.addEventListener("click", () => {
-          const group = btn.closest(".option-group");
-          group.querySelectorAll(".select-btn").forEach(b => b.classList.remove("active"));
-          btn.classList.add("active");
-          updateTotal();
+// -------------------------------
+// Sauvegarder un template
+// -------------------------------
+document.getElementById("save-template-btn").addEventListener("click", async () => {
+    const userId = localStorage.getItem("user_id_number");
+    if (!userId) {
+        alert("❌ Vous devez être connecté pour enregistrer un template.");
+        return;
+    }
+
+const components = {};
+let hasSelection = false;
+
+document.querySelectorAll("tr[data-component]").forEach(row => {
+    const component = row.dataset.component;
+    const activeBtn = row.querySelector(".select-btn.active");
+    components[component] = {
+        selected: activeBtn ? activeBtn.textContent.trim() : "Aucun",
+        price: activeBtn ? parseFloat(activeBtn.dataset.price) : 0
+    };
+
+    if (activeBtn && parseFloat(activeBtn.dataset.price) > 0) {
+        hasSelection = true; // Au moins un composant sélectionné
+    }
+});
+
+if (!hasSelection) {
+    alert("❌ Vous devez sélectionner au moins un composant avant d'enregistrer le template.");
+    return;
+}
+
+
+    const totalPrice = Object.values(components).reduce((sum, c) => sum + c.price, 0);
+
+    const templateName = prompt("Nom du template :", "Mon Template");
+    if (!templateName) return;
+
+    const response = await fetch("http://localhost:3000/api/templates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            user_id_number: userId,
+            template_name: templateName,
+            components,
+            total_price: totalPrice
+        })
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+        alert("✅ Template enregistré avec succès !");
+    } else {
+        alert("❌ Erreur : " + result.error);
+    }
+});
+
+// -------------------------------
+// Voir les templates + Charger/Supprimer
+// -------------------------------
+document.getElementById("show-templates-btn").addEventListener("click", async () => {
+    const userId = localStorage.getItem("user_id_number");
+    if (!userId) {
+        alert("❌ Vous devez être connecté pour voir vos templates.");
+        return;
+    }
+
+    const panel = document.getElementById("templates-list");
+
+    // Toggle visibilité
+    if (!panel.classList.contains("hidden")) {
+        panel.classList.add("hidden");
+        panel.innerHTML = "";
+        return;
+    }
+
+    // Récupérer templates du backend
+    const response = await fetch(`http://localhost:3000/api/templates/${userId}`);
+    const data = await response.json();
+
+    if (!response.ok) {
+        alert("❌ Erreur : " + data.error);
+        return;
+    }
+
+    // Affichage
+    panel.classList.remove("hidden");
+    panel.innerHTML = "<h3>📂 Vos Templates</h3>";
+
+    if (data.length === 0) {
+        panel.innerHTML += "<p>Aucun template enregistré.</p>";
+        return;
+    }
+
+    data.forEach(tpl => {
+        const tempDiv = document.createElement("div");
+        tempDiv.classList.add("template-item");
+
+        tempDiv.innerHTML = `
+            <strong>${tpl.template_name}</strong> — ${tpl.total_price} $
+            <button class="load-template-btn" data-id="${tpl.template_id}">Charger</button>
+            <button class="delete-template-btn" data-id="${tpl.template_id}">Supprimer</button>
+        `;
+
+        panel.appendChild(tempDiv);
+    });
+
+    // -------------------------------
+    // Bouton Charger
+    // -------------------------------
+    document.querySelectorAll(".load-template-btn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+            const templateId = btn.dataset.id;
+            const res = await fetch(`http://localhost:3000/api/template/${templateId}`);
+            const tpl = await res.json();
+
+            if (!res.ok) {
+                alert("❌ Impossible de charger le template.");
+                return;
+            }
+
+            applyTemplateToUI(tpl.components);
+            alert("✅ Template chargé !");
         });
-      });
+    });
+
+    // -------------------------------
+    // Bouton Supprimer
+    // -------------------------------
+    document.querySelectorAll(".delete-template-btn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+            const templateId = btn.dataset.id;
+            const confirmDelete = confirm("Voulez-vous vraiment supprimer ce template ?");
+            if (!confirmDelete) return;
+
+            const res = await fetch(`http://localhost:3000/api/template/${templateId}`, {
+                method: "DELETE"
+            });
+
+            const result = await res.json();
+            if (res.ok) {
+                alert("✅ Template supprimé !");
+                btn.parentElement.remove(); // Retire le template du DOM
+            } else {
+                alert("❌ Impossible de supprimer : " + result.error);
+            }
+        });
+    });
+});
+
+// -------------------------------
+// Appliquer un template
+// -------------------------------
+function applyTemplateToUI(components) {
+    document.querySelectorAll("tr[data-component]").forEach(row => {
+        const comp = row.dataset.component;
+        const value = components[comp]?.selected;
+        if (!value || value === "Aucun") return;
+
+        row.querySelectorAll(".select-btn").forEach(btn => {
+            btn.classList.remove("active");
+            if (btn.textContent.trim() === value) {
+                btn.classList.add("active");
+                row.querySelector(".price").textContent = components[comp].price + " $";
+            }
+        });
+    });
+    updateTotal();
+}
+
     </script>
+
+
+
   </body>
 </html>

@@ -494,3 +494,169 @@ footer {
 .search-bar input:focus {
   background: rgba(255, 255, 255, 0.2);
 }
+/* bouton ajouter template */
+#save-template-btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(155, 140, 247, 0.35);
+  border-radius: 6px;
+  backdrop-filter: blur(6px);
+
+  transition: background .15s ease, transform .15s ease, box-shadow .2s;
+}
+
+#save-template-btn:hover {
+  background: rgba(255, 255, 255, 0.10);
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(155,140,247,.30);
+}
+
+#save-template-btn:active {
+  transform: translateY(0);
+}
+
+
+/* boutons pour voir les templates */
+#show-templates-btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(155, 140, 247, 0.35);
+  border-radius: 6px;
+  backdrop-filter: blur(6px);
+
+  transition: background .15s ease, transform .15s ease, box-shadow .2s;
+}
+
+#show-templates-btn:hover {
+  background: rgba(255, 255, 255, 0.10);
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(155,140,247,.30);
+}
+
+#show-templates-btn:active {
+  transform: translateY(0);
+}
+
+
+/* liste des templates */
+.template-item {
+  padding: 8px;
+  font-size: 14px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+/* Modal backdrop */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: rgba(17,24,39,0.95);
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  max-width: 400px;
+  width: 90%;
+  box-shadow: var(--shadow-1);
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.template-item {
+  padding: 12px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(155,140,247,.40);
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background .2s;
+}
+
+.template-item:hover {
+  background: rgba(255,255,255,0.12);
+}
+/* Styles communs pour tous les boutons de template */
+.delete-template-btn,
+.load-template-btn {
+  display: inline-block;
+  min-width: 70px;          /* réduit (100px → 70px) */
+  padding: 5px 10px;        /* réduit (8px 14px → 5px 10px) */
+  font-size: 12px;          /* réduit (14px → 12px) */
+  font-weight: 600;
+  color: #fff;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 5px;        /* légerement plus petit */
+  border: 1px solid transparent;
+  backdrop-filter: blur(4px); /* effet réduit */
+  transition: background .15s ease, transform .15s ease, box-shadow .2s;
+  margin-left: 5px;
+  box-sizing: border-box;
+}
+
+/* Supprimer - rouge clair */
+.delete-template-btn {
+  background: rgba(255, 80, 80, 0.15);
+  border: 1px solid rgba(255, 80, 80, 0.35);
+}
+.delete-template-btn:hover {
+  background: rgba(255, 80, 80, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 0 6px rgba(255, 80, 80, .3); /* shadow réduit */
+}
+
+/* Charger - vert clair */
+.load-template-btn {
+  background: rgba(80, 255, 80, 0.15);
+  border: 1px solid rgba(80, 255, 80, 0.35);
+}
+.load-template-btn:hover {
+  background: rgba(80, 255, 80, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 0 6px rgba(80, 255, 80, .3); /* shadow réduit */
+}
+
+/* Conteneur pour aligner sur une ligne */
+.template-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;       /* plus compact */
+}
+
+.template-item strong {
+  flex: 1;
+}
