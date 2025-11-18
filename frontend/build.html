@@ -6,7 +6,9 @@
     <title>PC4U – Configurateur</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="./style/style.css" />
+    <link rel="stylesheet" href="./style/style_build.css"/>
   </head>
+  
   <!-- Modal pour afficher les templates -->
   <div id="templates-modal" class="modal hidden">
     <div class="modal-content">
@@ -17,24 +19,14 @@
   </div>
 
   <body>
-    <header class="site-header">
-      <div class="header-inner">
-        <a class="header-brand" href="./index.html">
-          <img src="./assets/img/log3.png" alt="Logo PC4U" />
-          <span>PC4U</span>
-        </a>
-        <nav class="nav">
-          <a href="./products.html">Produits</a>
-          <a href="./login.html">Connexion</a>
-          <a href="./register.html">Inscription</a>
-        </nav>
-      </div>
-    </header>
 
-   <main class="configurator">
-     <section class="intro">
-       <h1>Bienvenue sur le configurateur PC4U</h1>
-       <p>Sélectionne les composants pour créer ton PC sur mesure.</p>
+
+
+
+    <main class="configurator">
+      <section class="intro">
+        <h1>Bienvenue au configurateur PC4U</h1>
+        <p>Sélectionne les composants pour créer ton PC sur mesure.</p>
       </section>
       
       <section class="table-section">
@@ -52,289 +44,341 @@
               <th>Prix</th>
             </tr>
           </thead>
-
-          <tbody>
-            <tr data-component="cpu">
-              <td>CPU</td>
-              <td>
-                <div class="option-group">
-                  <button class="select-btn" data-price="0">None</button>
-                  <button class="select-btn" data-price="250">Intel i5</button>
-                  <button class="select-btn" data-price="350">Intel i7</button>
-                  <button class="select-btn" data-price="450">Intel i9</button>
-                </div>
-              </td>
-              <td class="price">$0</td>
-            </tr>
-
-            <tr data-component="gpu">
-              <td>GPU</td>
-              <td>
-                <div class="option-group">
-                  <button class="select-btn" data-price="0">None</button>
-                  <button class="select-btn" data-price="400">RTX 4060</button>
-                  <button class="select-btn" data-price="700">RTX 4070</button>
-                  <button class="select-btn" data-price="1000">RTX 4080</button>
-                </div>
-              </td>
-              <td class="price">$0</td>
-            </tr>
-
-            <tr data-component="ram">
-              <td>RAM</td>
-              <td>
-                <div class="option-group">
-                  <button class="select-btn" data-price="0">None</button>
-                  <button class="select-btn" data-price="50">8 Go</button>
-                  <button class="select-btn" data-price="100">16 Go</button>
-                  <button class="select-btn" data-price="180">32 Go</button>
-                </div>
-              </td>
-              <td class="price">$0</td>
-            </tr>
-
-            <tr data-component="ssd">
-              <td>Stockage SSD</td>
-              <td>
-                <div class="option-group">
-                  <button class="select-btn" data-price="0">None</button>
-                  <button class="select-btn" data-price="80">512 Go</button>
-                  <button class="select-btn" data-price="120">1 To</button>
-                  <button class="select-btn" data-price="200">2 To</button>
-                </div>
-              </td>
-              <td class="price">$0</td>
-            </tr>
-
-            <tr data-component="os">
-              <td>Windows 11</td>
-              <td>
-                <div class="option-group">
-                  <button class="select-btn" data-price="0">None</button>
-                  <button class="select-btn" data-price="120">Famille</button>
-                  <button class="select-btn" data-price="180">Pro</button>
-                </div>
-              </td>
-              <td class="price">$0</td>
-            </tr>
-          </tbody>
+          <tbody id="tableBody">
+         </tbody>
         </table>
 
         <div class="total">
           <strong>Total :</strong> <span id="total-price">0 $</span>
         </div>
-
       </section>
     </main>
+    
 
     <footer>© PC4U — Tous droits réservés.</footer>
 
     <script>
 
-      // -------------------------------
-// Gestion des sélections et calcul du total
-// -------------------------------
-const buttons = document.querySelectorAll(".select-btn");
-const totalPriceEl = document.getElementById("total-price");
+      // Base de données des composants
+      const componentsDB = {
+        cpu: [
+          { name: 'Intel Core i9-13900K', price: 589 },
+          { name: 'AMD Ryzen 9 7950X', price: 549 },
+          { name: 'Intel Core i7-13700K', price: 409 },
+          { name: 'AMD Ryzen 7 7700X', price: 349 },
+          { name: 'Intel Core i5-13600K', price: 319 }
+        ],
+        gpu: [
+          { name: 'NVIDIA RTX 4090', price: 1599 },
+          { name: 'NVIDIA RTX 4080', price: 1199 },
+          { name: 'AMD Radeon RX 7900 XTX', price: 999 },
+          { name: 'NVIDIA RTX 4070 Ti', price: 799 },
+          { name: 'AMD Radeon RX 7900 XT', price: 849 }
+        ],
+        ram: [
+          { name: 'Corsair Vengeance 32GB DDR5', price: 159 },
+          { name: 'G.Skill Trident Z5 32GB DDR5', price: 169 },
+          { name: 'Kingston Fury 16GB DDR5', price: 89 },
+          { name: 'Corsair Dominator 64GB DDR5', price: 329 }
+        ],
+        ssd: [
+          { name: 'Samsung 990 Pro 2TB', price: 189 },
+          { name: 'WD Black SN850X 2TB', price: 179 },
+          { name: 'Samsung 980 Pro 1TB', price: 99 },
+          { name: 'Crucial P5 Plus 2TB', price: 149 }
+        ],
+        os: [
+          { name: 'Windows 11 Home', price: 139 },
+          { name: 'Windows 11 Pro', price: 199 }
+        ],
+        case: [
+          { name: 'NZXT H510 Elite', price: 149 },
+          { name: 'Corsair 4000D Airflow', price: 104 },
+          { name: 'Lian Li O11 Dynamic', price: 139 },
+          { name: 'Fractal Design Meshify C', price: 89 }
+        ],
+        monitor: [
+          { name: 'ASUS ROG Swift 27" 1440p 165Hz', price: 449 },
+          { name: 'LG UltraGear 24" 1080p 144Hz', price: 249 },
+          { name: 'Samsung Odyssey G7 32" 1440p 240Hz', price: 699 },
+          { name: 'Dell S2721DGF 27" 1440p 165Hz', price: 429 }
+        ],
+        keyboard: [
+          { name: 'Corsair K70 RGB', price: 169 },
+          { name: 'Logitech G915 TKL', price: 229 },
+          { name: 'Razer BlackWidow V3', price: 139 },
+          { name: 'Keychron K8', price: 89 }
+        ],
+        mouse: [
+          { name: 'Logitech G Pro X Superlight', price: 159 },
+          { name: 'Razer DeathAdder V3', price: 69 },
+          { name: 'SteelSeries Rival 3', price: 29 },
+          { name: 'Corsair Dark Core RGB', price: 89 }
+        ]
+      };
 
-function updateTotal() {
-    let total = 0;
-    document.querySelectorAll("tr[data-component]").forEach(row => {
-        const active = row.querySelector(".select-btn.active");
-        if (active) {
-            total += parseFloat(active.dataset.price);
-            row.querySelector(".price").textContent = active.dataset.price + " $";
-        } else {
-            row.querySelector(".price").textContent = "$0";
+
+// Liste dynamique des composants à afficher
+const componentList = {
+  cpu: { label: "CPU", icon: "./assets/img/build/CPU.png" },
+  motherboard: { label: "Carte mere", icon: "./assets/img/build/Motherboard.png" },
+  ram: { label: "RAM", icon: "./assets/img/build/RAM.png" },
+  storage: { label: "Stockage", icon: "./assets/img/build/SSD.png" },
+  gpu: { label: "GPU", icon: "./assets/img/build/GPU.png" },
+  psu: { label: "Alimentation", icon: "./assets/img/build/PSU.png" },
+  case: { label: "Boîtier", icon: "./assets/img/build/Case.png" },
+  cooler: { label: "Refroidissement", icon: "./assets/img/build/cooling.png" },
+  os: { label: "Système d'exploitation", icon: "./assets/img/build/os.png" },
+};
+
+
+/* Generation des lignes du tableau */ 
+function generateRows() {
+  const tableBody = document.getElementById("tableBody");
+  tableBody.innerHTML = "";
+
+  for (const key in componentList) {
+    const comp = componentList[key];
+
+    const row = document.createElement("tr");
+    row.setAttribute("data-component", key);
+
+    row.innerHTML = `
+      <td>
+        <button class="button">
+          <span class="icon-build">
+            <img src="${comp.icon}" alt="${comp.label} icon">
+          </span>
+          ${comp.label}
+        </button>
+      </td>
+
+      <td>
+        <div class="dropdown-container">
+          <select class="component-select" data-component="${key}">
+            <option value="" data-price="0">Ajouter ${comp.label}...</option>
+          </select>
+        </div>
+      </td>
+
+      <td class="price">$0</td>
+    `;
+
+    tableBody.appendChild(row);
+  }
+}
+
+      // Initialiser les menus déroulants
+      function initDropdowns() {
+        document.querySelectorAll('.component-select').forEach(select => {
+          const component = select.dataset.component;
+          const items = componentsDB[component];
+          
+          if (items) {
+            items.forEach(item => {
+              const option = document.createElement('option');
+              option.value = item.name;
+              option.textContent = item.name;
+              option.setAttribute('data-price', item.price);
+              select.appendChild(option);
+            });
+          }
+          
+          // Event listener pour mettre à jour le prix
+          select.addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            const price = parseFloat(selectedOption.getAttribute('data-price'));
+            const priceCell = this.closest('tr').querySelector('.price');
+            priceCell.textContent = price === 0 ? '$0' : '$' + price;
+            updateTotal();
+          });
+        });
+      }
+
+      // Mettre à jour le total
+      const totalPriceEl = document.getElementById("total-price");
+
+      function updateTotal() {
+        let total = 0;
+        document.querySelectorAll("tr[data-component]").forEach(row => {
+          const select = row.querySelector('.component-select');
+          if (select && select.selectedIndex > 0) {
+            const price = parseFloat(select.options[select.selectedIndex].getAttribute('data-price'));
+            total += price;
+          }
+        });
+        totalPriceEl.textContent = total.toFixed(2) + " $";
+        totalPriceEl.classList.add("glow");
+        setTimeout(() => totalPriceEl.classList.remove("glow"), 400);
+      }
+
+      // Sauvegarder un template
+      document.getElementById("save-template-btn").addEventListener("click", async () => {
+        const userId = localStorage.getItem("user_id_number");
+        if (!userId) {
+          alert("❌ Vous devez être connecté pour enregistrer un template.");
+          return;
         }
-    });
-    totalPriceEl.textContent = total.toFixed(2) + " $";
-    totalPriceEl.classList.add("glow");
-    setTimeout(() => totalPriceEl.classList.remove("glow"), 400);
-}
 
-buttons.forEach(btn => {
-    btn.addEventListener("click", () => {
-        const group = btn.closest(".option-group");
-        group.querySelectorAll(".select-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        updateTotal();
-    });
-});
+        const components = {};
+        let hasSelection = false;
 
-// -------------------------------
-// Sauvegarder un template
-// -------------------------------
-document.getElementById("save-template-btn").addEventListener("click", async () => {
-    const userId = localStorage.getItem("user_id_number");
-    if (!userId) {
-        alert("❌ Vous devez être connecté pour enregistrer un template.");
-        return;
-    }
+        document.querySelectorAll("tr[data-component]").forEach(row => {
+          const component = row.dataset.component;
+          const select = row.querySelector('.component-select');
+          const selectedOption = select.options[select.selectedIndex];
+          
+          components[component] = {
+            selected: selectedOption.value || "Aucun",
+            price: parseFloat(selectedOption.getAttribute('data-price')) || 0
+          };
 
-const components = {};
-let hasSelection = false;
+          if (selectedOption.value && parseFloat(selectedOption.getAttribute('data-price')) > 0) {
+            hasSelection = true;
+          }
+        });
 
-document.querySelectorAll("tr[data-component]").forEach(row => {
-    const component = row.dataset.component;
-    const activeBtn = row.querySelector(".select-btn.active");
-    components[component] = {
-        selected: activeBtn ? activeBtn.textContent.trim() : "Aucun",
-        price: activeBtn ? parseFloat(activeBtn.dataset.price) : 0
-    };
+        if (!hasSelection) {
+          alert("❌ Vous devez sélectionner au moins un composant avant d'enregistrer le template.");
+          return;
+        }
 
-    if (activeBtn && parseFloat(activeBtn.dataset.price) > 0) {
-        hasSelection = true; // Au moins un composant sélectionné
-    }
-});
+        const totalPrice = Object.values(components).reduce((sum, c) => sum + c.price, 0);
 
-if (!hasSelection) {
-    alert("❌ Vous devez sélectionner au moins un composant avant d'enregistrer le template.");
-    return;
-}
+        const templateName = prompt("Nom du template :", "Mon Template");
+        if (!templateName) return;
 
-
-    const totalPrice = Object.values(components).reduce((sum, c) => sum + c.price, 0);
-
-    const templateName = prompt("Nom du template :", "Mon Template");
-    if (!templateName) return;
-
-    const response = await fetch("http://localhost:3000/api/templates", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+        const response = await fetch("http://localhost:3000/api/templates", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
             user_id_number: userId,
             template_name: templateName,
             components,
             total_price: totalPrice
-        })
-    });
+          })
+        });
 
-    const result = await response.json();
+        const result = await response.json();
 
-    if (response.ok) {
-        alert("✅ Template enregistré avec succès !");
-    } else {
-        alert("❌ Erreur : " + result.error);
-    }
-});
+        if (response.ok) {
+          alert("✅ Template enregistré avec succès !");
+        } else {
+          alert("❌ Erreur : " + result.error);
+        }
+      });
 
-// -------------------------------
-// Voir les templates + Charger/Supprimer
-// -------------------------------
-document.getElementById("show-templates-btn").addEventListener("click", async () => {
-    const userId = localStorage.getItem("user_id_number");
-    if (!userId) {
-        alert("❌ Vous devez être connecté pour voir vos templates.");
-        return;
-    }
+      // Voir les templates
+      document.getElementById("show-templates-btn").addEventListener("click", async () => {
+        const userId = localStorage.getItem("user_id_number");
+        if (!userId) {
+          alert("❌ Vous devez être connecté pour voir vos templates.");
+          return;
+        }
 
-    const panel = document.getElementById("templates-list");
+        const modal = document.getElementById("templates-modal");
+        const container = document.getElementById("templates-container");
 
-    // Toggle visibilité
-    if (!panel.classList.contains("hidden")) {
-        panel.classList.add("hidden");
-        panel.innerHTML = "";
-        return;
-    }
+        // Récupérer templates du backend
+        const response = await fetch(`http://localhost:3000/api/templates/${userId}`);
+        const data = await response.json();
 
-    // Récupérer templates du backend
-    const response = await fetch(`http://localhost:3000/api/templates/${userId}`);
-    const data = await response.json();
+        if (!response.ok) {
+          alert("❌ Erreur : " + data.error);
+          return;
+        }
 
-    if (!response.ok) {
-        alert("❌ Erreur : " + data.error);
-        return;
-    }
+        // Affichage
+        modal.classList.remove("hidden");
+        container.innerHTML = "";
 
-    // Affichage
-    panel.classList.remove("hidden");
-    panel.innerHTML = "<h3>📂 Vos Templates</h3>";
+        if (data.length === 0) {
+          container.innerHTML = "<p>Aucun template enregistré.</p>";
+          return;
+        }
 
-    if (data.length === 0) {
-        panel.innerHTML += "<p>Aucun template enregistré.</p>";
-        return;
-    }
+        data.forEach(tpl => {
+          const tempDiv = document.createElement("div");
+          tempDiv.classList.add("template-item");
 
-    data.forEach(tpl => {
-        const tempDiv = document.createElement("div");
-        tempDiv.classList.add("template-item");
-
-        tempDiv.innerHTML = `
+          tempDiv.innerHTML = `
             <strong>${tpl.template_name}</strong> — ${tpl.total_price} $
             <button class="load-template-btn" data-id="${tpl.template_id}">Charger</button>
             <button class="delete-template-btn" data-id="${tpl.template_id}">Supprimer</button>
-        `;
+          `;
 
-        panel.appendChild(tempDiv);
-    });
+          container.appendChild(tempDiv);
+        });
 
-    // -------------------------------
-    // Bouton Charger
-    // -------------------------------
-    document.querySelectorAll(".load-template-btn").forEach(btn => {
-        btn.addEventListener("click", async () => {
+        // Bouton Charger
+        document.querySelectorAll(".load-template-btn").forEach(btn => {
+          btn.addEventListener("click", async () => {
             const templateId = btn.dataset.id;
             const res = await fetch(`http://localhost:3000/api/template/${templateId}`);
             const tpl = await res.json();
 
             if (!res.ok) {
-                alert("❌ Impossible de charger le template.");
-                return;
+              alert("❌ Impossible de charger le template.");
+              return;
             }
 
             applyTemplateToUI(tpl.components);
+            modal.classList.add("hidden");
             alert("✅ Template chargé !");
+          });
         });
-    });
 
-    // -------------------------------
-    // Bouton Supprimer
-    // -------------------------------
-    document.querySelectorAll(".delete-template-btn").forEach(btn => {
-        btn.addEventListener("click", async () => {
+        // Bouton Supprimer
+        document.querySelectorAll(".delete-template-btn").forEach(btn => {
+          btn.addEventListener("click", async () => {
             const templateId = btn.dataset.id;
             const confirmDelete = confirm("Voulez-vous vraiment supprimer ce template ?");
             if (!confirmDelete) return;
 
             const res = await fetch(`http://localhost:3000/api/template/${templateId}`, {
-                method: "DELETE"
+              method: "DELETE"
             });
 
             const result = await res.json();
             if (res.ok) {
-                alert("✅ Template supprimé !");
-                btn.parentElement.remove(); // Retire le template du DOM
+              alert("✅ Template supprimé !");
+              btn.parentElement.remove();
             } else {
-                alert("❌ Impossible de supprimer : " + result.error);
+              alert("❌ Impossible de supprimer : " + result.error);
             }
+          });
         });
-    });
-});
+      });
 
-// -------------------------------
-// Appliquer un template
-// -------------------------------
-function applyTemplateToUI(components) {
-    document.querySelectorAll("tr[data-component]").forEach(row => {
-        const comp = row.dataset.component;
-        const value = components[comp]?.selected;
-        if (!value || value === "Aucun") return;
+      // Fermer le modal
+      document.getElementById("close-modal").addEventListener("click", () => {
+        document.getElementById("templates-modal").classList.add("hidden");
+      });
 
-        row.querySelectorAll(".select-btn").forEach(btn => {
-            btn.classList.remove("active");
-            if (btn.textContent.trim() === value) {
-                btn.classList.add("active");
-                row.querySelector(".price").textContent = components[comp].price + " $";
+      // Appliquer un template
+      function applyTemplateToUI(components) {
+        document.querySelectorAll("tr[data-component]").forEach(row => {
+          const comp = row.dataset.component;
+          const value = components[comp]?.selected;
+          if (!value || value === "Aucun") return;
+
+          const select = row.querySelector('.component-select');
+          for (let i = 0; i < select.options.length; i++) {
+            if (select.options[i].value === value) {
+              select.selectedIndex = i;
+              const price = parseFloat(select.options[i].getAttribute('data-price'));
+              row.querySelector(".price").textContent = '$' + price;
+              break;
             }
+          }
         });
-    });
-    updateTotal();
-}
+        updateTotal();
+      }
+
+      // Initialiser au chargement
+     generateRows();   
+    initDropdowns();  
 
     </script>
-
-
-
   </body>
 </html>
