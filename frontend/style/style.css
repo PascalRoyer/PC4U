@@ -352,3 +352,180 @@ footer {
 }
 .search-bar input:focus { background: rgba(255,255,255,0.2); }
 
+
+
+
+ .hero h1 {
+            font-size: 64px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero h2 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        }
+
+
+
+
+
+        /* Style pour les icones de la page dacceuil */ 
+
+
+/* Centrer les icones */
+.creator-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 12px;          
+}
+
+
+.creator-wrapper.center-both {
+  min-height: calc(100vh - 120px); 
+  align-items: center;              
+}
+
+
+
+.creator-card {
+  
+  margin: 0;
+}
+
+
+/* Icones */ 
+      
+.creator-card {
+  width: 360px;
+  height: 300px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.45));
+  box-shadow: 0 8px 20px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.02);
+  margin: 12px;
+   outline: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* background image layer */
+.creator-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(.55) contrast(.95);
+  transform: scale(1.02);
+}
+
+/* content layer (title top, button bottom) */
+.creator-content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 18px;
+}
+
+/* title at top, centered */
+.creator-title {
+  margin: 6px 0 0;
+  text-align: center;
+  color: #ffffff;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-size: 20px;
+  text-shadow: 0 2px 8px rgba(0,0,0,.6);
+}
+
+/* bottom centered button */
+.creator-cta {
+  align-self: center;
+  margin-bottom: 6px;
+  padding: 10px 22px;
+  border-radius: 20px;
+  background: linear-gradient(90deg,#4f46e5,#8b5cf6);
+  color: #fff;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(139,92,246,.24);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.creator-cta:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(139,92,246,.30); }
+.creator-cta:active { transform: translateY(0); box-shadow: 0 6px 14px rgba(0,0,0,.35); }
+
+/* optional small border bar at bottom like image */
+.creator-card::after {
+  content: "";
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  height: 4px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+  z-index: 1;
+}
+
+
+
+
+/* page background: layered gradients + optional pattern */
+body {
+  /* base color fallback */
+  background-color: #071026;
+
+  /* layered background: two soft radial highlights + vertical gradient + optional texture image */
+  background-image:
+    radial-gradient(600px 300px at 10% 10%, rgba(79,70,229,0.12), transparent 12%),
+    radial-gradient(700px 350px at 90% 85%, rgba(59,130,246,0.08), transparent 14%),
+    linear-gradient(180deg, #030417 0%, #071026 45%, #041225 100%),
+    url("./assets/img/bg-pattern.png"); /* optional subtle texture - remove if unused */
+
+  background-size: 800px 400px, 900px 450px, cover, auto;
+  background-position: left top, right bottom, center, center;
+  background-repeat: no-repeat, no-repeat, no-repeat, repeat;
+  background-attachment: fixed, fixed, fixed, scroll;
+
+  color: var(--text);
+  transition: background 0.3s ease;
+}
+
+/* subtle animated shift for the radial highlights (optional) */
+@keyframes bg-drift {
+  0% { background-position: 8% 12%, 92% 88%, center; }
+  50% { background-position: 12% 10%, 88% 90%, center; }
+  100% { background-position: 8% 12%, 92% 88%, center; }
+}
+body.animated-bg {
+  animation: bg-drift 18s linear infinite;
+}
+
+/* small-screen tweak to avoid large off-screen highlights */
+@media (max-width: 720px) {
+  body {
+    background-image:
+      radial-gradient(400px 200px at 50% 8%, rgba(79,70,229,0.10), transparent 20%),
+      linear-gradient(180deg, #030417 0%, #071026 60%, #041225 100%);
+    background-size: 600px 300px, cover;
+    background-position: center top, center;
+  }
+}
+
