@@ -1,0 +1,476 @@
+
+
+/* =====================================================
+   1. LAYOUT & CONTAINERS
+   ===================================================== */
+
+.table-section {
+  max-width: 1000px;
+  margin: 60px auto;
+  padding: 40px 20px;
+  background: rgba(17, 24, 39, 0.85);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1), var(--shadow-inset);
+  backdrop-filter: blur(8px);
+  text-align: center;
+}
+
+.table-section h2 {
+  font-size: 28px;
+  margin-bottom: 25px;
+  color: var(--accent-2);
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* =====================================================
+   2. TABLES
+   ===================================================== */
+
+.config-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.config-table th,
+.config-table td {
+  border: 1px solid var(--border);
+  padding: 14px 18px;
+  text-align: center;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.config-table th {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-weight: 700;
+  text-align: left;
+}
+
+.config-table td {
+  text-align: left;
+}
+
+.config-table tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.config-table tr:hover {
+  background: rgba(123, 97, 255, 0.15);
+  transition: background 0.2s ease;
+}
+
+/* =====================================================
+   3. PRICING & TOTALS
+   ===================================================== */
+
+.price {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.total {
+  font-size: 20px;
+  color: #fff;
+  margin-top: 20px;
+  text-align: right;
+  font-weight: 700;
+}
+
+.total strong {
+  color: var(--accent-2);
+}
+
+#total-price {
+  color: var(--accent-2);
+  transition: all 0.3s ease;
+}
+
+#total-price.glow {
+  text-shadow: 0 0 15px rgba(155, 140, 247, 0.7);
+}
+
+/* =====================================================
+   4. PRODUCT CARDS
+   ===================================================== */
+
+.product-card {
+  background: rgba(17, 24, 39, 0.85);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-inset);
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 15px rgba(155, 140, 247, 0.35);
+}
+
+.product-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: contain;
+  margin-bottom: 12px;
+}
+
+.product-card h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.product-card p {
+  color: var(--text-muted);
+  margin: 4px 0;
+}
+
+.product-card .price {
+  font-weight: bold;
+  color: var(--accent-2);
+  margin: 8px 0;
+}
+
+.product-card .btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(155, 140, 247, 0.4);
+  color: white;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.product-card .btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* =====================================================
+   5. BUTTONS
+   ===================================================== */
+
+/* Boutons génériques */
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background-color: #1a1a1a;
+  color: #ffffff;
+  padding: 12px 24px;
+  border: 1px solid #3a3d5e;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.button:hover {
+  background-color: #2a2a2a;
+  transform: translateY(-1px);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+/* Boutons dans le tableau */
+.config-table button {
+  padding: 8px 14px;
+  border: 1px solid rgba(155, 140, 247, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.config-table button:hover {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 10px rgba(155, 140, 247, 0.35);
+  transform: translateY(-1px);
+}
+
+/* Bouton de sélection */
+.select-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(155, 140, 247, 0.4);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 600;
+  transition: all var(--ts);
+}
+
+.select-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 15px rgba(155, 140, 247, 0.35);
+  transform: translateY(-2px);
+}
+
+.select-btn.active {
+  background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+  border-color: transparent;
+  box-shadow: 0 0 10px rgba(155, 140, 247, 0.4);
+}
+
+/* Bouton ajouter ligne */
+.add-row-button {
+  margin-top: 20px;
+  background-color: #5a5d8e;
+}
+
+.add-row-button:hover {
+  background-color: #6a6d9e;
+}
+
+/* =====================================================
+   6. DROPDOWNS & SELECT
+   ===================================================== */
+
+.dropdown-container {
+  position: relative;
+  width: 100%;
+}
+
+.dropdown-container::after {
+  content: '▼';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #ffffff;
+  font-size: 12px;
+}
+
+select {
+  width: 100%;
+  padding: 12px 40px 12px 16px;
+  background-color: #2a2d3e;
+  color: #ffffff;
+  border: 1px solid #3a3d5e;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  appearance: none;
+  transition: all 0.2s ease;
+}
+
+select:hover {
+  background-color: #343750;
+  border-color: #4a4d6e;
+}
+
+select:focus {
+  outline: none;
+  border-color: #5a5d8e;
+}
+
+option {
+  background-color: #2a2d3e;
+  padding: 12px;
+}
+
+.option-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* =====================================================
+   7. TEMPLATES
+   ===================================================== */
+
+/* Boutons template principaux */
+#save-template-btn,
+#show-templates-btn {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(155, 140, 247, 0.35);
+  border-radius: 6px;
+  backdrop-filter: blur(6px);
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.2s;
+}
+
+#save-template-btn:hover,
+#show-templates-btn:hover {
+  background: rgba(255, 255, 255, 0.10);
+  transform: translateY(-1px);
+  box-shadow: 0 0 10px rgba(155, 140, 247, 0.30);
+}
+
+#save-template-btn:active,
+#show-templates-btn:active {
+  transform: translateY(0);
+}
+
+/* Items de template */
+.template-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(155, 140, 247, 0.40);
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.template-item:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.template-item strong {
+  flex: 1;
+}
+
+/* Boutons d'action template */
+.delete-template-btn,
+.load-template-btn {
+  display: inline-block;
+  min-width: 70px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  backdrop-filter: blur(4px);
+  transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.2s;
+  margin-left: 5px;
+  box-sizing: border-box;
+}
+
+.delete-template-btn {
+  background: rgba(255, 80, 80, 0.15);
+  border: 1px solid rgba(255, 80, 80, 0.35);
+}
+
+.delete-template-btn:hover {
+  background: rgba(255, 80, 80, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 0 6px rgba(255, 80, 80, 0.3);
+}
+
+.load-template-btn {
+  background: rgba(80, 255, 80, 0.15);
+  border: 1px solid rgba(80, 255, 80, 0.35);
+}
+
+.load-template-btn:hover {
+  background: rgba(80, 255, 80, 0.25);
+  transform: translateY(-1px);
+  box-shadow: 0 0 6px rgba(80, 255, 80, 0.3);
+}
+
+/* =====================================================
+   8. MODAL
+   ===================================================== */
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: rgba(17, 24, 39, 0.95);
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  max-width: 400px;
+  width: 90%;
+  box-shadow: var(--shadow-1);
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--text);
+}
+
+/* =====================================================
+   9. ICONS & IMAGES
+   ===================================================== */
+
+.icon-build {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  min-height: 28px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-size: 20px;
+}
+
+.icon-build img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* =====================================================
+   10. SEARCH BAR
+   ===================================================== */
+
+.search-bar {
+  margin: 20px;
+  text-align: center;
+}
+
+.search-bar input {
+  width: 50%;
+  padding: 10px 15px;
+  border-radius: 12px;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  outline: none;
+  font-size: 1rem;
+  transition: 0.3s;
+}
+
+.search-bar input:focus {
+  background: rgba(255, 255, 255, 0.2);
+}

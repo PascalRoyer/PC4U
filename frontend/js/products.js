@@ -1,46 +1,10 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PC4U – Produits</title>
-  <link rel="stylesheet" href="./style/style.css" />
-</head>
-<body>
-  <header class="site-header">
-    <div class="header-inner">
-      <a class="header-brand" href="./index.html">
-        <img src="./assets/img/log3.png" alt="Logo PC4U" />
-        <span>PC4U</span>
-      </a>
-      <nav class="nav">
-        <a href="./index.html">Accueil</a>
-        <a href="./build.html">Configurateur</a>
-        <a href="./products.html" aria-current="page">Produits</a>
-        <a href="./login.html">Connexion</a>
-        <a href="./register.html">Inscription</a>
-      </nav>
-    </div>
-  </header>
-
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Rechercher un produit..." />
-  </div>
-
-  <main>
-    <div class="product-grid" id="productGrid"></div>
-  </main>
-
-  <footer>© <span id="year"></span> PC4U — Tous droits réservés.</footer>
-
-  <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
     const datasetFiles = [
-      "case.json"
+        "cpu.json"
+    //   "case.json",
     //   "case-accessory.json",
     //   "case-fan.json",
-    //   "cpu.json",
     //   "cpu-cooler.json",
     //   "memory.json",
     //   "motherboard.json",
@@ -62,7 +26,7 @@
     //   "webcam.json",
     //   "wired-network-card.json",
     //   "wireless-network-card.json"
-    // les autres fichiers sont commentés pour l'instant car le fichier est trop volumineux
+    //la base de donnés des produits sera ajoutée plus tard car il est lent à charger plusieurs fichiers
     ];
 
     const productGrid = document.getElementById('productGrid');
@@ -111,6 +75,3 @@
     });
 
     loadProducts();
-  </script>
-</body>
-</html>
