@@ -33,84 +33,117 @@
 
   <footer>© <span id="year"></span> PC4U — Tous droits réservés.</footer>
 
+  <script src="./js/auth.js"></script>
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-
-    const datasetFiles = [
-      "case.json"
-    //   "case-accessory.json",
-    //   "case-fan.json",
-    //   "cpu.json",
-    //   "cpu-cooler.json",
-    //   "memory.json",
-    //   "motherboard.json",
-    //   "monitor.json",
-    //   "mouse.json",
-    //   "keyboard.json",
-    //   "video-card.json",
-    //   "power-supply.json",
-    //   "os.json",
-    //   "external-hard-drive.json",
-    //   "internal-hard-drive.json",
-    //   "sound-card.json",
-    //   "speakers.json",
-    //   "headphones.json",
-    //   "thermal-paste.json",
-    //   "ups.json",
-    //   "fan-controller.json",
-    //   "optical-drive.json",
-    //   "webcam.json",
-    //   "wired-network-card.json",
-    //   "wireless-network-card.json"
-    // les autres fichiers sont commentés pour l'instant car le fichier est trop volumineux
-    ];
-
     const productGrid = document.getElementById('productGrid');
+    const searchInput = document.getElementById('searchInput');
+    const yearSpan = document.getElementById('year');
     let allProducts = [];
 
+    document.addEventListener('DOMContentLoaded', async () => {
+      // année
+      if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+
+      // protection : redirection vers login si pas connecté
+      if (window.PC4UAuth && PC4UAuth.requireAuth) {
+        await PC4UAuth.requireAuth();
+      }
+
+      // gérer le header (login / logout)
+      setupHeaderAuthUI();
+
+      // charger les produits
+      await loadProducts();
+
+      // recherche
+      if (searchInput) {
+        searchInput.addEventListener('input', () => {
+          const q = searchInput.value.toLowerCase();
+          const filtered = allProducts.filter(p =>
+            (p.product_name && p.product_name.toLowerCase().includes(q)) ||
+            (p.category_name && p.category_name.toLowerCase().includes(q))
+          );
+          displayProducts(filtered);
+        });
+      }
+    });
+
+    function setupHeaderAuthUI() {
+      const user = window.PC4UAuth && PC4UAuth.getCurrentUser
+        ? PC4UAuth.getCurrentUser()
+        : null;
+
+      const loginLink = document.getElementById('nav-login');
+      const registerLink = document.getElementById('nav-register');
+      const logoutBtn = document.getElementById('nav-logout');
+
+      if (user) {
+        if (loginLink) loginLink.style.display = 'none';
+        if (registerLink) registerLink.style.display = 'none';
+        if (logoutBtn) {
+          logoutBtn.style.display = 'inline-block';
+          logoutBtn.addEventListener('click', () => {
+            PC4UAuth.logout();
+          });
+        }
+      } else {
+        if (logoutBtn) logoutBtn.style.display = 'none';
+      }
+    }
+
     async function loadProducts() {
-      for (const file of datasetFiles) {
-        try {
-          const res = await fetch(`./dataset/${file}`);
-          if (!res.ok) continue;
-          const data = await res.json();
-          // Chaque fichier JSON peut contenir un tableau de produits
-          allProducts = allProducts.concat(data);
-        } catch (err) {
-          console.error("Erreur fichier", file, err);
+      try {
+        const base = (window.PC4UAuth && PC4UAuth.API_BASE) || 'http://localhost:8080';
+        const res = await fetch(`${base}/api/products`);
+
+        if (!res.ok) throw new Error('Erreur serveur lors du chargement des produits');
+        allProducts = await res.json();
+        displayProducts(allProducts);
+      } catch (err) {
+        console.error('Erreur produits:', err);
+        if (productGrid) {
+          productGrid.innerHTML = `<p style="color:red">${err.message}</p>`;
         }
       }
-      displayProducts(allProducts);
     }
 
     function displayProducts(list) {
+      if (!productGrid) return;
+
+      if (!Array.isArray(list) || list.length === 0) {
+        productGrid.innerHTML = '<p>Aucun produit trouvé.</p>';
+        return;
+      }
+
       productGrid.innerHTML = '';
+
       list.forEach(prod => {
         const card = document.createElement('div');
         card.className = 'product-card';
+
+        const priceText =
+          prod.product_price != null
+            ? `${Number(prod.product_price).toFixed(2)} $`
+            : '—';
+
+        const categoryText = prod.category_name || '';
+
         card.innerHTML = `
-          <img src="${prod.image || './assets/img/default.png'}" alt="${prod.name}" />
-          <h3>${prod.name || prod.title || "Produit"}</h3>
-          <p>${prod.category || prod.type || ""}</p>
-          <div class="price">${prod.price ? prod.price + " $" : "—"}</div>
+          <img src="${prod.image_url || './assets/img/default.png'}" alt="${prod.product_name}" />
+          <h3>
+            <a href="./productdetail.html?id=${prod.product_id}">
+              ${prod.product_name}
+            </a>
+          </h3>
+          <p>${categoryText}</p>
+          <div class="price">${priceText}</div>
           <button class="btn btn-primary">Ajouter</button>
         `;
+
         productGrid.appendChild(card);
       });
     }
-
-    // Recherche
-    const searchInput = document.getElementById('searchInput');
-    searchInput.addEventListener('input', () => {
-      const query = searchInput.value.toLowerCase();
-      const filtered = allProducts.filter(p =>
-        (p.name && p.name.toLowerCase().includes(query)) ||
-        (p.category && p.category.toLowerCase().includes(query))
-      );
-      displayProducts(filtered);
-    });
-
-    loadProducts();
   </script>
+
 </body>
 </html>

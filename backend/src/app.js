@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const prebuiltRoutes = require('./routes/prebuilt');
+const productsRoutes = require('./routes/products');
 
 require('dotenv').config();
 
@@ -27,6 +28,7 @@ app.get('/api/health', (_, res) => {
 });
 app.use('/api/auth', authRoutes);
 app.use('/api/prebuilt', prebuiltRoutes);
+app.use('/api/products', productsRoutes);
 
 
 // Frontend statique
