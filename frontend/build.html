@@ -68,6 +68,12 @@
       </section>
     </main>
     
+   
+    
+
+ 
+
+    
 
     <footer>© PC4U — Tous droits réservés.</footer>
 
@@ -144,6 +150,45 @@ const componentList = {
   cooler: { label: "Refroidissement", icon: "./assets/img/build/cooling.png" },
   os: { label: "Système d'exploitation", icon: "./assets/img/build/os.png" },
 };
+
+
+  // Fonction pour ajouter la configuration au panier et rediriger vers le panier
+  function addToCartAndRedirect() {
+    const build = getCurrentBuild();
+    const hasSelection = Object.values(build.components).some(c => c.name && c.price > 0);
+    if (!hasSelection) {
+      alert("Sélectionnez au moins un composant avant d'ajouter au panier.");
+      return;
+    }
+    const cart = JSON.parse(localStorage.getItem('pc4u_cart') || '[]');
+    cart.push({ id: Date.now(), ...build });
+    localStorage.setItem('pc4u_cart', JSON.stringify(cart));
+    window.location.href = './Shopping-cart.html'; // Redirige vers le panier
+  }
+
+  // Assure la présence du bouton "Ajouter au panier"
+  const addToCartBtn = document.createElement('button');
+  addToCartBtn.textContent = 'Ajouter au panier';
+  addToCartBtn.className = 'template-btn';
+  addToCartBtn.addEventListener('click', addToCartAndRedirect);
+  document.querySelector('.template-buttons').appendChild(addToCartBtn);
+
+function getCurrentBuild() {
+  const build = { components: {}, total: 0 };
+  document.querySelectorAll('tr[data-component]').forEach(row => {
+    const key = row.dataset.component;
+    const select = row.querySelector('.component-select');
+    const opt = select.options[select.selectedIndex];
+    const name = opt?.value || "Aucun";
+    const price = parseFloat(opt?.getAttribute('data-price')) || 0;
+    build.components[key] = { name, price };
+    build.total += price;
+  });
+  build.total = parseFloat(build.total.toFixed(2));
+  return build;
+}
+
+
 
 
 /* Generation des lignes du tableau */ 
