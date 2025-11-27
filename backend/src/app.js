@@ -2,45 +2,52 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const prebuiltRoutes = require('./routes/prebuilt');
-
 require('dotenv').config();
 
-// Connexion SQL
+// DB
 const { connectDB } = require('./db');
+
 // Routes
 const authRoutes = require('./routes/auth');
+const prebuiltRoutes = require('./routes/prebuilt');
 
-//  Créer l'app AVANT d'utiliser app.use(...)
 const app = express();
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:8080', // ton frontend
+  credentials: true
+}));
 app.use(express.json());
 
-// DB
+// Connexion à la base SQL Server
 connectDB();
 
 // Routes API
 app.get('/api/health', (_, res) => {
-  res.json({ ok: true, message: 'API + DB opérationnelles ' });
+  res.json({ ok: true, message: 'API + DB opérationnelles' });
 });
+
 app.use('/api/auth', authRoutes);
 app.use('/api/prebuilt', prebuiltRoutes);
-
 
 // Frontend statique
 const FRONTEND_DIR = path.join(__dirname, '../../frontend');
 app.use(express.static(FRONTEND_DIR));
+
 app.get('/', (_, res) => {
   res.sendFile(path.join(FRONTEND_DIR, 'index.html'));
 });
 
-// 404 JSON
-app.use((req, res) => res.status(404).json({ error: 'Route introuvable ' }));
+// 404 JSON pour les routes inconnues
+app.use((req, res) => {
+  res.status(404).json({ error: 'Route introuvable' });
+});
 
-// Démarrage
+// Démarrage du serveur
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
-  console.log(`Serveur actif : http://localhost:${PORT}`);
+  console.log(`🚀 Serveur actif : http://localhost:${PORT}`);
 });
+
+module.exports = app;
