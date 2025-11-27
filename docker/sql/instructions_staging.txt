@@ -72,6 +72,7 @@ Ici sont détaillées les instructions pour insérer les fichiers csv dans votre
 				WHEN resolution LIKE '51202880' THEN '5120x2880'
                 WHEN resolution LIKE '25601080' THEN '2560x1080'
 				WHEN resolution LIKE '25601600' THEN '2560x1600'
+                WHEN resolution LIKE '1360768' THEN '1360x768'
                 WHEN resolution LIKE '1366768' THEN '1366x768'
                 WHEN resolution LIKE '1024768' THEN '1024x768'
 				WHEN resolution LIKE '1440900' THEN '1440x900'

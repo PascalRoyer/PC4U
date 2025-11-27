@@ -27,58 +27,603 @@
     <input type="text" id="searchInput" placeholder="Rechercher un produit..." />
   </div>
 
-  <main>
-    <div class="product-grid" id="productGrid"></div>
+  <main class="products-layout">
+    <aside class="filters">
+      <h2>Filtres</h2>
+
+      <div class="form-field">
+        <label for="categoryFilter">Catégorie</label>
+        <select id="categoryFilter">
+          <option value="">Toutes</option>
+          <option value="CPU">CPU</option>
+          <option value="GPU">GPU</option>
+          <option value="Monitors">Moniteurs</option>
+          <option value="Memory_RAM">Mémoire RAM</option>
+          <option value="Storage">Stockage</option>
+          <option value="Power_supply">Alimentations</option>
+          <option value="Cases">Boîtiers</option>
+          <option value="Motherboards">Cartes mères</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label for="minPrice">Prix min ($)</label>
+        <input type="number" id="minPrice" min="0" step="1" />
+      </div>
+
+      <div class="form-field">
+        <label for="maxPrice">Prix max ($)</label>
+        <input type="number" id="maxPrice" min="0" step="1" />
+      </div>
+
+      <div id="cpuFilters" class="filter-group" data-category="CPU">
+        <h3>CPU</h3>
+        <div class="form-field">
+          <label for="corecount">Nombre de coeurs</label>
+          <input type="number" id="corecount" min="1" max="64" step="1" />
+        </div>
+        <div class="form-field">
+          <label for="coreclock">Fréquence (GHz)</label>
+          <input type="number" id="coreclock" min="1.00" max="5.00" step="0.01" />
+        </div>
+        <div class="form-field">
+          <label for="boostclock">Fréquence boost (GHz)</label>
+          <input type="number" id="boostclock" min="0.00" max="6.20" step="0.01" />
+        </div>
+        <div class="form-field">
+          <label for="microarchitecture">Microarchitecture</label>
+          <select id="microarchitecture">
+            <option value="">Toutes</option>
+            <option value="Alder Lake">Alder Lake</option>
+            <option value="Arrow Lake">Arrow Lake</option>
+            <option value="Broadwell">Broadwell</option>
+            <option value="Bulldozer">Bulldozer</option>
+            <option value="Cascade Lake">Cascade Lake</option>
+            <option value="Coffee Lake">Coffee Lake</option>
+            <option value="Coffee Lake Refresh">Coffee Lake Refresh</option>
+            <option value="Cornet Lake">Cornet Lake</option>
+            <option value="Core">Core</option>
+            <option value="Excavator">Excavator</option>
+            <option value="Haswell">Toutes</option>
+            <option value="Haswell Refresh">Haswell Refresh</option>
+            <option value="Ivy Bridge">Ivy Bridge</option>
+            <option value="K10">K10</option>
+            <option value="Kaby Lake">Kaby Lake</option>
+            <option value="Lynx">Lynx</option>
+            <option value="Nehalem">Nehalem</option>
+            <option value="Piledriver">Piledriver</option>
+            <option value="Raptor Lake">Raptor Lake</option>
+            <option value="Raptor Lake Refresh">Rocket Lake Refresh</option>
+            <option value="Rocket Lake">Rocket Lake</option>
+            <option value="Sandy Bridge">Sandy Bridge</option>
+            <option value="Skylake">Skylake</option>
+            <option value="Steamroller">Steamroller</option>
+            <option value="Westmere">Westmere</option>
+            <option value="Wolfdale">Wolfdale</option>
+            <option value="Yorkfield">Yorkfield</option>
+            <option value="Zen">Zen</option>
+            <option value="Zen 2">Zen 2</option>
+            <option value="Zen 3">Zen 3</option>
+            <option value="Zen 4">Zen 4</option>
+            <option value="Zen 5">Zen 5</option>
+            <option value="Zen+">Zen+</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="tdp">Enveloppe thermique (Watts)</label>
+          <input type="number" id="tdp" min="35" max="280" step="1" />
+        </div>
+        <div class="form-field">
+          <label for="graphics">Graphiques</label>
+          <select id="graphics">
+            <option value="">Tous</option>
+            <option value="Intel HD Graphics">Intel HD Graphics</option>
+            <option value="Intel HD Graphics 2000">Intel HD Graphics 2000</option>
+            <option value="Intel HD Graphics 2500">Intel HD Graphics 2500</option>
+            <option value="Intel HD Graphics 3000">Intel HD Graphics 3000</option>
+            <option value="Intel HD Graphics 4000">Intel HD Graphics 4000</option>
+            <option value="Intel HD Graphics 4400">Intel HD Graphics 4400</option>
+            <option value="Intel HD Graphics 4600">Intel HD Graphics 4600</option>
+            <option value="Intel HD Graphics 510">Intel HD Graphics 510</option>
+            <option value="Intel HD Graphics 530">Intel HD Graphics 530</option>
+            <option value="Intel HD Graphics 610">Intel HD Graphics 610</option>
+            <option value="Intel HD Graphics 630">Intel HD Graphics 630</option>
+            <option value="Intel HD Graphics P4000">Intel HD Graphics P4000</option>
+            <option value="Intel HD Graphics P630">Intel HD Graphics P630</option>
+            <option value="Intel UHD Graphics 610">Intel UHD Graphics 610</option>
+            <option value="Intel UHD Graphics 630">Intel UHD Graphics 630</option>
+            <option value="Intel UHD Graphics 710">Intel UHD Graphics 710</option>
+            <option value="Intel UHD Graphics 730">Intel UHD Graphics 730</option>
+            <option value="Intel UHD Graphics 750">Intel UHD Graphics 750</option>
+            <option value="Intel UHD Graphics 770">Intel UHD Graphics 770</option>
+            <option value="Intel Xe">Intel Xe</option>
+            <option value="Radeon">Radeon</option>
+            <option value="Radeon 740M">Radeon 740M</option>
+            <option value="Radeon 760M">Radeon 760M</option>
+            <option value="Radeon 780M">Radeon 780M</option>
+            <option value="Radeon HD 6410D">Radeon HD 6410D</option>
+            <option value="Radeon HD 7660D">Radeon HD 7660D</option>
+            <option value="Radeon HD 8370D">Radeon HD 8370D</option>
+            <option value="Radeon HD 8570D">Radeon HD 8570D</option>
+            <option value="Radeon HD 8670D">Radeon HD 8670D</option>
+            <option value="Radeon R5 (on die)">Radeon R5 (on die)</option>
+            <option value="Radeon R7 (on-die)">Radeon R7 (on-die)</option>
+            <option value="Radeon Vega 11">Radeon Vega 11</option>
+            <option value="Radeon Vega 3">Radeon Vega 3</option>
+            <option value="Radeon Vega 7">Radeon Vega 7</option>
+            <option value="Radeon Vega 8">Radeon Vega 8</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="gpuFilters" class="filter-group" data-category="GPU">
+        <h3>GPU</h3>
+        <div class="form-field">
+          <label for="memory">Mémoire (GB)</label>
+          <input type="number" id="memory" min="1" max="48" step="1" />
+        </div>
+        <div class="form-field">
+          <label for="mcoreclock">Fréquence (MHz)</label>
+          <input type="number" id="mcoreclock" min="100" max="2800" step="1" />
+        </div>
+        <div class="form-field">
+          <label for="mboostclock">Fréquence boost (MHz)</label>
+          <input type="number" id="mboostclock" min="0" max="3320" step="1" />
+        </div>
+        <div class="form-field">
+          <label for="length">Longueur (mm)</label>
+          <input type="number" id="length" min="100" max="360" step="1" />
+        </div>
+      </div>
+
+      <div id="monitorFilters" class="filter-group" data-category="Monitors">
+        <h3>Moniteurs</h3>
+        <div class="form-field">
+          <label for="screensize">Taille de l'écran (po)</label>
+          <input type="number" id="screensize" min="13" max="65" step="1" />
+        </div>
+        <div class="form-field">
+          <label for="resolution">Résolution</label>
+          <select id="resolution">
+            <option value="1024x768">1024x768</option>
+            <option value="1280x1024">1280x1024</option>
+            <option value="1360x768">1360x768</option>
+            <option value="1366x768">1366x768</option>
+            <option value="1440x900">1440x900</option>
+            <option value="1600x900">1600x900</option>
+            <option value="1680x1050">1680x1050</option>
+            <option value="1920x1080">1920x1080</option>
+            <option value="1920x1200">1920x1200</option>
+            <option value="1980x1080">1980x1080</option>
+            <option value="2560x1080">2560x1080</option>
+            <option value="2560x1440">2560x1440</option>
+            <option value="2560x1600">2560x1600</option>
+            <option value="2560x2880">2560x2880</option>
+            <option value="3440x1440">3440x1440</option>
+            <option value="3840x1080">3840x1080</option>
+            <option value="3840x1600">3840x1600</option>
+            <option value="3840x2160">3840x2160</option>
+            <option value="3840x2560">3840x2560</option>
+            <option value="5120x1440">5120x1440</option>
+            <option value="5120x2160">5120x2160</option>
+            <option value="5120x2880">5120x2880</option>
+            <option value="7680x2160">7680x2160</option>
+            <option value="7680x4320">7680x4320</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="refreshrate">Taux de rafraîchissement</label>
+          <input type="number" id="refreshrate" min="60" max="600" step="1" />
+        </div>
+        <div class="form-field">
+          <label for="responsetime">Temps de réponse</label>
+          <input type="number" id="responsetime" min="0.01" max="20" step="0.01" />
+        </div>
+        <div class="form-field">
+          <label for="paneltype">Type de panneau</label>
+          <select id="paneltype">
+            <option value="AHVA">AHVA</option>
+            <option value="IPS">IPS</option>
+            <option value="Mini LED">Mini LED</option>
+            <option value="Mini LED IPS">Mini LED IPS</option>
+            <option value="Mini LED VA">Mini LED VA</option>
+            <option value="Nano IPS">Nano IPS</option>
+            <option value="OLED">OLED</option>
+            <option value="PLS">PLS</option>
+            <option value="QD-OLED">QD-OLED</option>
+            <option value="QD-VA">QD-VA</option>
+            <option value="TN">TN</option>
+            <option value="VA">VA</option>
+            <option value="WOLED">WOLED</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="aspectratio">Rapport d'écran</label>
+          <select id="aspectratio">
+            <option value="11:06">11:06</option>
+            <option value="12:05">12:05</option>
+            <option value="16:09">16:09</option>
+            <option value="16:10">16:10</option>
+            <option value="21:09">21:09</option>
+            <option value="3:02">3:02</option>
+            <option value="32:09:00">32:09:00</option>
+            <option value="4:03">4:03</option>
+            <option value="5:04">5:04</option>
+            <option value="64:27:00">64:27:00</option>
+            <option value="8:09">8:09</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="memoryFilters" class="filter-group" data-category="Memory_RAM">
+        <h3>Memory/RAM</h3>
+        <div class="form-field">
+          <label for="speed">Vitesse (MT/s)</label>
+          <input type="number" id="speed" min="400" max="8000" step="100" />
+        </div>
+        <div class="form-field">
+          <label for="modules">Modules (GB)</label>
+          <select id="modules">
+            <option value="1x1">1x1</option>
+            <option value="1x16">1x16</option>
+            <option value="1x2">1x2</option>
+            <option value="1x24">1x24</option>
+            <option value="1x32">1x32</option>
+            <option value="1x4">1x4</option>
+            <option value="1x48">1x48</option>
+            <option value="1x64">1x64</option>
+            <option value="1x8">1x8</option>
+            <option value="2x1">2x1</option>
+            <option value="2x16">2x16</option>
+            <option value="2x2">2x2</option>
+            <option value="2x24">2x24</option>
+            <option value="2x32">2x32</option>
+            <option value="2x4">2x4</option>
+            <option value="2x48">2x48</option>
+            <option value="2x64">2x64</option>
+            <option value="2x8">2x8</option>
+            <option value="3x1">3x1</option>
+            <option value="3x16">3x16</option>
+            <option value="3x2">3x2</option>
+            <option value="3x4">3x4</option>
+            <option value="3x8">3x8</option>
+            <option value="4x16">4x16</option>
+            <option value="4x2">4x2</option>
+            <option value="4x24">4x24</option>
+            <option value="4x32">4x32</option>
+            <option value="4x4">4x4</option>
+            <option value="4x48">4x48</option>
+            <option value="4x64">4x64</option>
+            <option value="4x8">4x8</option>
+            <option value="8x16">8x16</option>
+            <option value="8x24">8x24</option>
+            <option value="8x32">8x32</option>
+            <option value="8x4">8x4</option>
+            <option value="8x48">8x48</option>
+            <option value="8x64">8x64</option>
+            <option value="8x8">8x8</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="firstwordlat">Latence de premier mot</label>
+          <input type="number" id="firstwordlat" min="7" max="15" step="1" />
+        </div>
+        <div class="form-field">
+          <label for="caslat">Latence CAS</label>
+          <input type="number" id="caslat" min="3" max="52" step="1" />
+        </div>
+
+      </div>
+
+      <div id="hddFilters" class="filter-group" data-category="Storage">
+        <h3>Storage</h3>
+        <div class="form-field">
+          <label for="hddtype">Type</label>
+          <select id="hddtype">
+            <option value="Desktop">Bureau</option>
+            <option value="Portable">Portable</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="interface">Interface</label>
+          <select id="interface">
+            <option value="USB Type-A 3.2 Gen 1">USB Type-A 3.2 Gen 1</option>
+            <option value="USB Type-C 3.2 Gen 2">USB Type-C 3.2 Gen 2</option>
+            <option value="USB Type-C 3.2 Gen 2x2">USB Type-C 3.2 Gen 2x2</option>
+            <option value="USB Type-C 3.2 Gen 1">USB Type-C 3.2 Gen 1</option>
+            <option value="USB Type-A 3.2 Gen 1, USB Type-C 3.2 Gen 1">USB Type-A 3.2 Gen 1, USB Type-C 3.2 Gen 1</option>
+            <option value="USB Type-A 3.2 Gen 2">USB Type-A 3.2 Gen 2</option>
+            <option value="USB Type-A 2.0, USB Type-A 3.2 Gen 1">USB Type-A 2.0, USB Type-A 3.2 Gen 1</option>
+            <option value="USB Type-A 2.0">USB Type-A 2.0</option>
+            <option value="USB Type-C">USB Type-C</option>
+            <option value="USB Type-C 4.0 Gen 3x2">USB Type-C 4.0 Gen 3x2</option>
+            <option value="USB Type-A 3.2 Gen 1, USB Type-C 3.2 Gen 2">USB Type-A 3.2 Gen 1, USB Type-C 3.2 Gen 2</option>
+            <option value="IEEE 1394B 9-Pin, eSATA 3.0 Gb/s, USB Type-A 3.2 Gen 1">IEEE 1394B 9-Pin, eSATA 3.0 Gb/s, USB Type-A 3.2 Gen 1</option>
+            <option value="IEEE 1394B 9-Pin, USB Type-A 3.2 Gen 1">IEEE 1394B 9-Pin, USB Type-A 3.2 Gen 1</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="capacity">Capacité (GB)</label>
+          <input type="number" id="capacity" min="120" max="24000" step="1" />
+        </div>
+      </div>
+
+      <div id="psFilters" class="filter-group" data-category="Power_supply">
+        <h3>Alimentation</h3>
+        <div class="form-field">
+          <label for="pstype">Type</label>
+          <select id="pstype">
+            <option value="ATX">ATX</option>
+            <option value="Flex ATX">Flex ATX</option>
+            <option value="Mini ITX">Mini ITX</option>
+            <option value="TFX">TFX</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="efficiency">Efficience</label>
+          <select id="efficiency">
+            <option value="bronze">bronze</option>
+            <option value="gold">gold</option>
+            <option value="platinum">platinum</option>
+            <option value="plus">plus</option>
+            <option value="silver">silver</option>
+            <option value="titanium">titanium</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="wattage">Puissance (W)</label>
+          <input type="number" id="wattage" min="220" max="2050" step="10" />
+        </div>
+        <div class="form-field">
+          <label for="modular">Modularité</label>
+          <select id="modular">
+            <option value="FALSE">Non modulaire</option>
+            <option value="Full">Entièrement modulaire</option>
+            <option value="Full/Side">Entièrement modulaire, câbles latéraux</option>
+            <option value="Semi">Semi-modulaire</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="caseFilters" class="filter-group" data-category="Cases">
+        <h3>Boîtiers</h3>
+        <div class="form-field">
+          <label for="casetype">Type de boîtier</label>
+          <select id="casetype">
+            <option value="ATX Desktop">ATX Desktop</option>
+            <option value="ATX Full Tower">ATX Full Tower</option>
+            <option value="ATX Mid Tower">ATX Mid Tower</option>
+            <option value="ATX Test Bench">ATX Test Bench</option>
+            <option value="HTPC">HTPC</option>
+            <option value="MicroATX Desktop">MicroATX Desktop</option>
+            <option value="MicroATX Mid Tower">MicroATX Mid Tower</option>
+            <option value="MicroATX Mini Tower">MicroATX Mini Tower</option>
+            <option value="MicroATX Slim">MicroATX Slim</option>
+            <option value="Mini ITX Desktop">Mini ITX Desktop</option>
+            <option value="Mini ITX Test Bench">Mini ITX Test Bench</option>
+            <option value="Mini ITX Tower">Mini ITX Tower</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="sidepanel">Panneau latéral</label>
+          <select id="sidepanel">
+            <option value="Acrylic">Acrylic</option>
+            <option value="Mesh">Mesh</option>
+            <option valiue="SECC">SECC</option>
+            <option value="Tempered Glass">Tempered Glass</option>
+            <option value="Tinted Acrylic">Tinted Acrylic</option>
+            <option value="Tinted Tempered Glass">Tinted Tempered Glass</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="externalvol">Volume externe (L)</label>
+          <input type="number" id="externalvol" min="4.00" max="155.00" step="0.10" />
+        </div>
+        <div class="form-field">
+          <label for="internal35bays">Baies internes 3.5</label>
+          <input type="number" id="internal35bays" min="0" max="18" step="1" />
+        </div>
+      </div>
+
+      <div id="mbFilters" class="filter-group" data-category="Motherboards">
+        <h3>Cartes-mère</h3>
+        <div class="form-field">
+          <label for="socket">Socket</label>
+          <select id="socket">
+            <option value="2 x LGA2011-3">2 x LGA2011-3</option>
+            <option value="2 x LGA2011-3 Narrow">2 x LGA2011-3 Narrow</option>
+            <option value="AM1">AM1</option>
+            <option value="AM3">AM3</option>
+            <option value="AM3/AM2+/AM2">AM3/AM2+/AM2</option>
+            <option value="AM3">AM3+</option>
+            <option value="AM3+/AM3">AM3+/AM3</option>
+            <option value="AM4">AM4</option>
+            <option value="AM5">AM5</option>
+            <option value="FM1">FM1</option>
+            <option value="FM2">FM2</option>
+            <option value="Integrated Atom C2358">Integrated Atom C2358</option>
+            <option value="Integrated Atom D2700">Integrated Atom D2700</option>
+            <option value="Integrated Atom D525">Integrated Atom D525</option>
+            <option value="Integrated Pentium N3700">Integrated Pentium N3700</option>
+            <option value="LGA1150">LGA1150</option>
+            <option value="LGA1151">LGA1151</option>
+            <option value="LGA1155">LGA1155</option>
+            <option value="LGA1156">LGA1156</option>
+            <option value="LGA1200">LGA1200</option>
+            <option value="LGA1366">LGA1366</option>
+            <option value="LGA1700">LGA1700</option>
+            <option value="LGA1851">LGA1851</option>
+            <option value="LGA2011">LGA2011</option>
+            <option value="LGA2011-3">LGA2011-3</option>
+            <option value="LGA2011-3 Narrow">LGA2011-3 Narrow</option>
+            <option value="LGA775">LGA775</option>
+            <option value="LGA775">LGA775</option>
+            <option value="LGA2066">LGA2066</option>
+            <option value="LGA775">LGA775</option>
+            <option value="sTR4">sTR4</option>
+            <option value="sTRX4">sTRX4</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="formfactor">Format</label>
+          <select id="formfactor">
+            <option value="ATX">ATX</option>
+            <option value="EATX">EATX</option>
+            <option value="Micro ATX">Micro ATX</option>
+            <option value="Mini DTX">Mini DTX</option>
+            <option value="Mini ITX">Mini ITX</option>
+            <option value="SSI CEB">SSI CEB</option>
+            <option value="Thin Mini ITX">Thin Mini ITX</option>
+            <option value="XL ATX">XL ATX</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="maxmemory">Mémoire maximale (Go)</label>
+          <select id="maxmemory">
+            <option value="4">4</option>
+            <option value="8">8</option>
+            <option value="16">16</option>
+            <option value="24">24</option>
+            <option value="32">32</option>
+            <option value="48">48</option>
+            <option value="64">64</option>
+            <option value="96">96</option>
+            <option value="128">128</option>
+            <option value="192">192</option>
+            <option value="256">256</option>
+            <option value="512">512</option>
+            <option value="1024">1024</option>
+            <option value="2048">2048</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="memoryslots">Slots mémoire</label>
+          <select id="memoryslots">
+            <option value="2">2</option>
+            <option value="4">4</option>
+            <option value="6">6</option>
+            <option value="8">8</option>
+            <option value="16">16</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="applyFilters" class="btn btn-primary">Appliquer les filtres</button>
+      <button id="resetFilters" class="btn" style="margin-top:8px;">Réinitialiser</button>
+    </aside>
+
+    <section class="product-grid-wrapper">
+      <div class="product-grid" id="productGrid"></div>
+    </section>
   </main>
 
   <footer>© <span id="year"></span> PC4U — Tous droits réservés.</footer>
 
   <script src="./js/auth.js"></script>
   <script>
-    const productGrid = document.getElementById('productGrid');
-    const searchInput = document.getElementById('searchInput');
-    const yearSpan = document.getElementById('year');
-    let allProducts = [];
+    const productGrid     = document.getElementById('productGrid');
+    const searchInput     = document.getElementById('searchInput');
+    const yearSpan        = document.getElementById('year');
+    const categoryFilter  = document.getElementById('categoryFilter');
+    const minPriceInput   = document.getElementById('minPrice');
+    const maxPriceInput   = document.getElementById('maxPrice');
+    const filterGroups    = document.querySelectorAll('.filter-group')
+    const applyBtn        = document.getElementById('applyFilters');
+    const resetBtn        = document.getElementById('resetFilters');
+
+    let allProducts    = [];
+    let currentFiltered = [];
 
     document.addEventListener('DOMContentLoaded', async () => {
-      // année
+      // année dans le footer
       if (yearSpan) yearSpan.textContent = new Date().getFullYear();
 
-      // protection : redirection vers login si pas connecté
+      // protection : obligé d’être connecté
       if (window.PC4UAuth && PC4UAuth.requireAuth) {
         await PC4UAuth.requireAuth();
       }
 
-      // gérer le header (login / logout)
+      // header login/logout
       setupHeaderAuthUI();
-
-      // charger les produits
+      //cacher les filtres spécifiques au début
+      updateCategoryFilterUI();
+      // chargement initial
       await loadProducts();
 
-      // recherche
+      // recherche texte
       if (searchInput) {
         searchInput.addEventListener('input', () => {
           const q = searchInput.value.toLowerCase();
-          const filtered = allProducts.filter(p =>
-            (p.product_name && p.product_name.toLowerCase().includes(q)) ||
+          const base = currentFiltered.length ? currentFiltered : allProducts;
+
+          const filtered = base.filter(p =>
+            (p.product_name  && p.product_name.toLowerCase().includes(q)) ||
             (p.category_name && p.category_name.toLowerCase().includes(q))
           );
+
           displayProducts(filtered);
         });
       }
+
+      //Montrer/Cacher des filtres
+      if (categoryFilter) {
+        categoryFilter.addEventListener('change', () => {
+          updateCategoryFilterUI();
+        })
+      }
+      // bouton "Appliquer les filtres"
+      if (applyBtn) {
+        applyBtn.addEventListener('click', async () => {
+          await applyFilters();
+        });
+      }
+
+      // bouton "Réinitialiser"
+      if (resetBtn) {
+        resetBtn.addEventListener('click', async () => {
+          if (categoryFilter) categoryFilter.value = "";
+          if (minPriceInput)  minPriceInput.value  = "";
+          if (maxPriceInput)  maxPriceInput.value  = "";
+          if (searchInput)    searchInput.value    = "";
+
+          filterGroups.forEach(g => {
+            g.querySelectorAll('input,select').forEach(el => {
+              if (el.type === 'checkbox' || el.type === 'radio') {
+                el.checked = false;
+              } else {
+                el.value = "";
+              }
+            });
+          });
+          updateCategoryFilterUI();
+          currentFiltered = [];
+          await loadProducts();
+        });
+      }
     });
+
+    function updateCategoryFilterUI() {
+      const cat = categoryFilter ? categoryFilter.value : "";
+      filterGroups.forEach(group => {
+        const target = group.getAttribute('data-category');
+        if (!cat || cat !== target) {
+          group.style.display = 'none';
+        } else {
+          group.style.display = 'block';
+        }
+      });
+    }
 
     function setupHeaderAuthUI() {
       const user = window.PC4UAuth && PC4UAuth.getCurrentUser
         ? PC4UAuth.getCurrentUser()
         : null;
 
-      const loginLink = document.getElementById('nav-login');
+      const loginLink    = document.getElementById('nav-login');
       const registerLink = document.getElementById('nav-register');
-      const logoutBtn = document.getElementById('nav-logout');
+      const logoutBtn    = document.getElementById('nav-logout');
 
       if (user) {
-        if (loginLink) loginLink.style.display = 'none';
+        if (loginLink)    loginLink.style.display = 'none';
         if (registerLink) registerLink.style.display = 'none';
         if (logoutBtn) {
           logoutBtn.style.display = 'inline-block';
@@ -94,13 +639,149 @@
     async function loadProducts() {
       try {
         const base = (window.PC4UAuth && PC4UAuth.API_BASE) || 'http://localhost:8080';
-        const res = await fetch(`${base}/api/products`);
+        const res  = await fetch(`${base}/api/products`);
 
         if (!res.ok) throw new Error('Erreur serveur lors du chargement des produits');
-        allProducts = await res.json();
+
+        allProducts    = await res.json();
+        currentFiltered = [];
         displayProducts(allProducts);
       } catch (err) {
         console.error('Erreur produits:', err);
+        if (productGrid) {
+          productGrid.innerHTML = `<p style="color:red">${err.message}</p>`;
+        }
+      }
+    }
+
+    async function applyFilters() {
+      try {
+        const base = (window.PC4UAuth && PC4UAuth.API_BASE) || 'http://localhost:8080';
+        const params = new URLSearchParams();
+
+        const cat = categoryFilter.value;
+        const minP = minPriceInput.value;
+        const maxP = maxPriceInput.value;
+
+        if (cat) params.set('category', cat);
+        if (minP) params.set('minPrice', minP);
+        if (maxP) params.set('maxPrice', maxP);
+
+        //filtres selon la catégorie
+        if (cat === 'CPU') {
+          const corecount = document.getElementById('corecount').value;
+          const coreclock = document.getElementById('coreclock').value;
+          const boostclock = document.getElementById('boostclock').value;
+          const microarchitecture = document.getElementById('microarchitecture').value;
+          const tdp = document.getElementById('tdp').value;
+          const graphics = document.getElementById('graphics').value;
+
+          if(corecount) params.set('corecount', corecount);
+          if(coreclock) params.set('coreclock', coreclock);
+          if(boostclock) params.set('boostclock', boostclock);
+          if(microarchitecture) params.set('microarchitecture', microarchitecture);
+          if(tdp) params.set('tdp', tdp);
+          if(graphics) params.set('graphics', graphics);
+        }
+        
+        if (cat === 'GPU') {
+          const memory = document.getElementById('memory').value;
+          const mcoreclock = document.getElementById('mcoreclock').value;
+          const mboostclock = document.getElementById('mboostclock').value;
+          const length = document.getElementById('length').value;
+
+          if(memory) params.set('memory', memory);
+          if(mcoreclock) params.set('mcoreclock', mcoreclock);
+          if(mboostclock) params.set('mboostclock', mboostclock);
+          if(length) params.set('length', length);
+        }
+
+        if (cat === 'Monitors') {
+          const screensize = document.getElementById('screensize').value;
+          const resolution = document.getElementById('resolution').value;
+          const refreshrate = document.getElementById('refreshrate').value;
+          const responsetime = document.getElementById('responsetime').value;
+          const paneltype = document.getElementById('paneltype').value;
+          const aspectratio = document.getElementById('aspectratio').value;
+
+          if(screensize) params.set('screensize', screensize);
+          if(resolution) params.set('resolution', resolution);
+          if(refreshrate) params.set('refreshrate', refreshrate);
+          if(responsetime) params.set('responsetime', responsetime);
+          if(paneltype) params.set('paneltype', paneltype);
+          if(aspectratio) params.set('aspectratio', aspectratio);
+        }
+
+        if (cat === 'Memory_RAM') {
+          const speed = document.getElementById('speed').value;
+          const modules = document.getElementById('modules').value;
+          const firstwordlat = document.getElementById('firstwordlat').value;
+          const caslat = document.getElementById('caslat').value;
+
+          if(speed) params.set('speed', speed);
+          if(modules) params.set('modules', modules);
+          if(firstwordlat) params.set('firstwordlat', firstwordlat);
+          if(caslat) params.set('caslat', caslat);
+        }
+
+        if (cat === 'Storage') {
+          const hddtype = document.getElementById('hddtype').value;
+          const interface = document.getElementById('interface').value;
+          const capacity = document.getElementById('capacity').value;
+
+          if(hddtype) params.set('hddtype', hddtype);
+          if(interface) params.set('interface', interface);
+          if(capacity) params.set('capacity', capacity);
+        }
+
+        if (cat === 'Power_supply') {
+          const pstype = document.getElementById('pstype').value;
+          const efficiency = document.getElementById('efficiency').value;
+          const wattage = document.getElementById('wattage').value;
+          const modular = document.getElementById('modular').value;
+
+          if(pstype) params.set('pstype', pstype);
+          if(efficiency) params.set('efficiency', efficiency);
+          if(wattage) params.set('wattage', wattage);
+          if(modular) params.set('modular', modular);
+        }
+
+        if (cat === 'Cases') {
+          const casetype = document.getElementById('casetype').value;
+          const sidepanel = document.getElementById('sidepanel').value;
+          const externalvol = document.getElementById('externalvol').value;
+          const internal35bays = document.getElementById('internal35bays').value;
+
+          if(casetype) params.set('casetype', casetype);
+          if(sidepanel) params.set('sidepanel', sidepanel);
+          if(externalvol) params.set('externalvol', externalvol);
+          if(internal35bays) params.set('internal35bays', internal35bays);
+        }
+
+        if (cat === 'Motherboards') {
+          const socket = document.getElementById('socket').value;
+          const formfactor = document.getElementById('formfactor').value;
+          const maxmemory = document.getElementById('maxmemory').value;
+          const memoryslots = document.getElementById('memoryslots').value;
+
+          if(socket) params.set('socket', socket);
+          if(formfactor) params.set('formfactor', formfactor);
+          if(maxmemory) params.set('maxmemory', maxmemory);
+          if(memoryslots) params.set('memoryslots', memoryslots);
+        }
+        
+        const url = `${base}/api/products/filter?${params.toString()}`;
+        const res = await fetch(url);
+        
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error("Erreur serveur lors de l'application des filtres");
+        }
+        const data = await res.json();
+        currentFiltered = data;
+        displayProducts(data);
+      } catch (err) {
+        console.error('Erreur filtres:', err);
         if (productGrid) {
           productGrid.innerHTML = `<p style="color:red">${err.message}</p>`;
         }
