@@ -15,10 +15,19 @@
 <body>
   <header class="site-header">
     <div class="header-inner">
-      <a class="header-brand" href="./index.html"><img src="./assets/img/log3.png" alt="PC4U" /></a>
+      <a class="header-brand" href="./index.html">
+        <img src="./assets/img/log3.png" alt="PC4U" />
+        
+      </a>
       <nav class="nav">
+       <nav class="nav">
         <a href="./build.html">Configurateur</a>
         <a href="./products.html">Produits</a>
+        <a href="./Shopping-cart.html">Panier</a>
+        <a href="./login.html">Log in</a>
+        <a href="./register.html">Register</a>
+        
+      </nav>
       </nav>
     </div>
   </header>
@@ -56,8 +65,7 @@
         div.innerHTML = `<h4>Configuration ${i+1} — ${new Date(entry.created_at).toLocaleString()}</h4><ul>${comps}</ul>`;
         container.appendChild(div);
       });
-      // optionally clear last order after display or keep for record
-      // localStorage.removeItem('pc4u_last_order');
+      
     }
 
     document.getElementById('backHome').addEventListener('click', () => {

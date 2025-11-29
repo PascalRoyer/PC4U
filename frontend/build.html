@@ -20,18 +20,25 @@
 
   <body>
 
-    <header class="site-header">
-      <div class="header-inner">
-        <a class="header-brand" href="./index.html">
-          <img src="./assets/img/log3.png" alt="Logo PC4U" />
-        </a>
-        <nav class="nav">
-          <a href="./products.html">Produits</a>
-          <a href="./login.html">Connexion</a>
-          <a href="./register.html">Inscription</a>
-        </nav>
-      </div>
-    </header>
+     <header class="site-header">
+    <div class="header-inner">
+      <a class="header-brand" href="./index.html">
+        <img src="./assets/img/log3.png" alt="PC4U" />
+        
+      </a>
+      <nav class="nav">
+       <nav class="nav">
+        <a href="./build.html">Configurateur</a>
+        <a href="./products.html">Produits</a>
+        <a href="./Shopping-cart.html">Panier</a>
+        <a href="./login.html">Log in</a>
+        <a href="./register.html">Register</a>
+        
+      </nav>
+      </nav>
+    </div>
+  </header>
+
 
 
     
@@ -64,6 +71,9 @@
 
         <div class="total">
           <strong>Total :</strong> <span id="total-price">0 $</span>
+        </div>
+        <div class="table-actions" style="text-align:center; margin-top:14px;">
+          <button id="add-to-cart-btn" class="template-btn">🛒 Ajouter au panier</button>
         </div>
       </section>
     </main>
@@ -195,11 +205,8 @@ function addToCartAndRedirect() {
   window.location.href = "./Shopping-cart.html";
 }
 
-const addBtn = document.createElement("button");
-addBtn.textContent = "Ajouter au panier";
-addBtn.className = "template-btn";
-addBtn.onclick = addToCartAndRedirect;
-document.querySelector(".template-buttons").appendChild(addBtn);
+const addToCartStaticBtn = document.getElementById("add-to-cart-btn");
+if (addToCartStaticBtn) addToCartStaticBtn.addEventListener("click", addToCartAndRedirect);
 
 /* -------------------------------------------
    GÉNÉRATION DES LIGNES DU TABLEAU
