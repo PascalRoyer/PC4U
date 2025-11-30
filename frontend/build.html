@@ -20,18 +20,25 @@
 
   <body>
 
-    <header class="site-header">
-      <div class="header-inner">
-        <a class="header-brand" href="./index.html">
-          <img src="./assets/img/log3.png" alt="Logo PC4U" />
-        </a>
-        <nav class="nav">
-          <a href="./products.html">Produits</a>
-          <a href="./login.html">Connexion</a>
-          <a href="./register.html">Inscription</a>
-        </nav>
-      </div>
-    </header>
+     <header class="site-header">
+    <div class="header-inner">
+      <a class="header-brand" href="./index.html">
+        <img src="./assets/img/log3.png" alt="PC4U" />
+        
+      </a>
+      <nav class="nav">
+       <nav class="nav">
+        <a href="./build.html">Configurateur</a>
+        <a href="./products.html">Produits</a>
+        <a href="./Shopping-cart.html">Panier</a>
+        <a href="./login.html">Log in</a>
+        <a href="./register.html">Register</a>
+        
+      </nav>
+      </nav>
+    </div>
+  </header>
+
 
 
     
@@ -65,77 +72,88 @@
         <div class="total">
           <strong>Total :</strong> <span id="total-price">0 $</span>
         </div>
+        <div class="table-actions" style="text-align:center; margin-top:14px;">
+          <button id="add-to-cart-btn" class="template-btn">🛒 Ajouter au panier</button>
+        </div>
       </section>
     </main>
+    
+   
+    
+
+ 
+
     
 
     <footer>© PC4U — Tous droits réservés.</footer>
 
-    <script>
+          <script>
+/* -------------------------------------------
+   BASE DE DONNÉES LOCALE DES COMPOSANTS
+------------------------------------------- */
+const componentsDB = {
+  cpu: [
+    { name: 'Intel Core i9-13900K', price: 589 },
+    { name: 'AMD Ryzen 9 7950X', price: 549 },
+    { name: 'Intel Core i7-13700K', price: 409 },
+    { name: 'AMD Ryzen 7 7700X', price: 349 },
+    { name: 'Intel Core i5-13600K', price: 319 }
+  ],
+  gpu: [
+    { name: 'NVIDIA RTX 4090', price: 1599 },
+    { name: 'NVIDIA RTX 4080', price: 1199 },
+    { name: 'AMD Radeon RX 7900 XTX', price: 999 },
+    { name: 'NVIDIA RTX 4070 Ti', price: 799 },
+    { name: 'AMD Radeon RX 7900 XT', price: 849 }
+  ],
+  ram: [
+    { name: 'Corsair Vengeance 32GB DDR5', price: 159 },
+    { name: 'G.Skill Trident Z5 32GB DDR5', price: 169 },
+    { name: 'Kingston Fury 16GB DDR5', price: 89 },
+    { name: 'Corsair Dominator 64GB DDR5', price: 329 }
+  ],
+  ssd: [
+    { name: 'Samsung 990 Pro 2TB', price: 189 },
+    { name: 'WD Black SN850X 2TB', price: 179 },
+    { name: 'Samsung 980 Pro 1TB', price: 99 },
+    { name: 'Crucial P5 Plus 2TB', price: 149 }
+  ],
+  os: [
+    { name: 'Windows 11 Home', price: 139 },
+    { name: 'Windows 11 Pro', price: 199 }
+  ],
+  case: [
+    { name: 'NZXT H510 Elite', price: 149 },
+    { name: 'Corsair 4000D Airflow', price: 104 },
+    { name: 'Lian Li O11 Dynamic', price: 139 },
+    { name: 'Fractal Design Meshify C', price: 89 }
+  ],
+  monitor: [
+    { name: 'ASUS ROG Swift 27" 1440p 165Hz', price: 449 },
+    { name: 'LG UltraGear 24" 1080p 144Hz', price: 249 },
+    { name: 'Samsung Odyssey G7 32" 1440p 240Hz', price: 699 },
+    { name: 'Dell S2721DGF 27" 1440p 165Hz', price: 429 }
+  ],
+  keyboard: [
+    { name: 'Corsair K70 RGB', price: 169 },
+    { name: 'Logitech G915 TKL', price: 229 },
+    { name: 'Razer BlackWidow V3', price: 139 },
+    { name: 'Keychron K8', price: 89 }
+  ],
+  mouse: [
+    { name: 'Logitech G Pro X Superlight', price: 159 },
+    { name: 'Razer DeathAdder V3', price: 69 },
+    { name: 'SteelSeries Rival 3', price: 29 },
+    { name: 'Corsair Dark Core RGB', price: 89 }
+  ]
+};
 
-      // Base de données des composants
-      const componentsDB = {
-        cpu: [
-          { name: 'Intel Core i9-13900K', price: 589 },
-          { name: 'AMD Ryzen 9 7950X', price: 549 },
-          { name: 'Intel Core i7-13700K', price: 409 },
-          { name: 'AMD Ryzen 7 7700X', price: 349 },
-          { name: 'Intel Core i5-13600K', price: 319 }
-        ],
-        gpu: [
-          { name: 'NVIDIA RTX 4090', price: 1599 },
-          { name: 'NVIDIA RTX 4080', price: 1199 },
-          { name: 'AMD Radeon RX 7900 XTX', price: 999 },
-          { name: 'NVIDIA RTX 4070 Ti', price: 799 },
-          { name: 'AMD Radeon RX 7900 XT', price: 849 }
-        ],
-        ram: [
-          { name: 'Corsair Vengeance 32GB DDR5', price: 159 },
-          { name: 'G.Skill Trident Z5 32GB DDR5', price: 169 },
-          { name: 'Kingston Fury 16GB DDR5', price: 89 },
-          { name: 'Corsair Dominator 64GB DDR5', price: 329 }
-        ],
-        ssd: [
-          { name: 'Samsung 990 Pro 2TB', price: 189 },
-          { name: 'WD Black SN850X 2TB', price: 179 },
-          { name: 'Samsung 980 Pro 1TB', price: 99 },
-          { name: 'Crucial P5 Plus 2TB', price: 149 }
-        ],
-        os: [
-          { name: 'Windows 11 Home', price: 139 },
-          { name: 'Windows 11 Pro', price: 199 }
-        ],
-        case: [
-          { name: 'NZXT H510 Elite', price: 149 },
-          { name: 'Corsair 4000D Airflow', price: 104 },
-          { name: 'Lian Li O11 Dynamic', price: 139 },
-          { name: 'Fractal Design Meshify C', price: 89 }
-        ],
-        monitor: [
-          { name: 'ASUS ROG Swift 27" 1440p 165Hz', price: 449 },
-          { name: 'LG UltraGear 24" 1080p 144Hz', price: 249 },
-          { name: 'Samsung Odyssey G7 32" 1440p 240Hz', price: 699 },
-          { name: 'Dell S2721DGF 27" 1440p 165Hz', price: 429 }
-        ],
-        keyboard: [
-          { name: 'Corsair K70 RGB', price: 169 },
-          { name: 'Logitech G915 TKL', price: 229 },
-          { name: 'Razer BlackWidow V3', price: 139 },
-          { name: 'Keychron K8', price: 89 }
-        ],
-        mouse: [
-          { name: 'Logitech G Pro X Superlight', price: 159 },
-          { name: 'Razer DeathAdder V3', price: 69 },
-          { name: 'SteelSeries Rival 3', price: 29 },
-          { name: 'Corsair Dark Core RGB', price: 89 }
-        ]
-      };
-
-
-// Liste dynamique des composants à afficher
+/* -------------------------------------------
+   LISTE DES TYPES DE COMPOSANTS
+------------------------------------------- */
 const componentList = {
   cpu: { label: "CPU", icon: "./assets/img/build/CPU.png" },
-  motherboard: { label: "Carte mere", icon: "./assets/img/build/Motherboard.png" },
+  motherboard: { label: "Carte mère", icon: "./assets/img/build/Motherboard.png" },
   ram: { label: "RAM", icon: "./assets/img/build/RAM.png" },
   storage: { label: "Stockage", icon: "./assets/img/build/SSD.png" },
   gpu: { label: "GPU", icon: "./assets/img/build/GPU.png" },
@@ -145,254 +163,251 @@ const componentList = {
   os: { label: "Système d'exploitation", icon: "./assets/img/build/os.png" },
 };
 
+/* -------------------------------------------
+   UTILISATEUR CONNECTÉ
+------------------------------------------- */
+function getUserIdForTemplates() {
+  const keys = ["user_id_number", "user_id", "id", "userId"];
+  for (const key of keys) {
+    const v = localStorage.getItem(key);
+    if (v) return Number(v);
+  }
+  return 1; // fallback DEV
+}
 
-/* Generation des lignes du tableau */ 
+/* -------------------------------------------
+   RÉCUPÉRATION DU BUILD ACTUEL
+------------------------------------------- */
+function getCurrentBuild() {
+  const build = { components: {}, total: 0 };
+  document.querySelectorAll("tr[data-component]").forEach(row => {
+    const key = row.dataset.component;
+    const select = row.querySelector(".component-select");
+    const opt = select.options[select.selectedIndex];
+    const name = opt?.value || "Aucun";
+    const price = Number(opt?.dataset.price || 0);
+    build.components[key] = { name, price };
+    build.total += price;
+  });
+  return build;
+}
+
+/* -------------------------------------------
+   AJOUT AU PANIER
+------------------------------------------- */
+function addToCartAndRedirect() {
+  const build = getCurrentBuild();
+  const ok = Object.values(build.components).some(c => c.price > 0);
+  if (!ok) return alert("Sélectionnez au moins un composant !");
+  const cart = JSON.parse(localStorage.getItem("pc4u_cart") || "[]");
+  cart.push({ id: Date.now(), ...build });
+  localStorage.setItem("pc4u_cart", JSON.stringify(cart));
+  window.location.href = "./Shopping-cart.html";
+}
+
+const addToCartStaticBtn = document.getElementById("add-to-cart-btn");
+if (addToCartStaticBtn) addToCartStaticBtn.addEventListener("click", addToCartAndRedirect);
+
+/* -------------------------------------------
+   GÉNÉRATION DES LIGNES DU TABLEAU
+------------------------------------------- */
 function generateRows() {
-  const tableBody = document.getElementById("tableBody");
-  tableBody.innerHTML = "";
+  const tbody = document.getElementById("tableBody");
+  tbody.innerHTML = "";
 
   for (const key in componentList) {
-    const comp = componentList[key];
-
+    const c = componentList[key];
     const row = document.createElement("tr");
-    row.setAttribute("data-component", key);
-
+    row.dataset.component = key;
     row.innerHTML = `
-      <td>
-        <button class="button">
-          <span class="icon-build">
-            <img src="${comp.icon}" alt="${comp.label} icon">
-          </span>
-          ${comp.label}
-        </button>
-      </td>
-
-      <td>
-        <div class="dropdown-container">
-          <select class="component-select" data-component="${key}">
-            <option value="" data-price="0">Ajouter ${comp.label}...</option>
+      <td><img src="${c.icon}" class="icon-build"> ${c.label}</td>
+      <td><select class="component-select" data-component="${key}">
+            <option value="" data-price="0">Ajouter ${c.label}...</option>
           </select>
-        </div>
       </td>
-
-      <td class="price">$0</td>
-    `;
-
-    tableBody.appendChild(row);
+      <td class="price">$0</td>`;
+    tbody.appendChild(row);
   }
 }
 
-      // Initialiser les menus déroulants
-      function initDropdowns() {
-        document.querySelectorAll('.component-select').forEach(select => {
-          const component = select.dataset.component;
-          const items = componentsDB[component];
-          
-          if (items) {
-            items.forEach(item => {
-              const option = document.createElement('option');
-              option.value = item.name;
-              option.textContent = item.name;
-              option.setAttribute('data-price', item.price);
-              select.appendChild(option);
-            });
-          }
-          
-          // Event listener pour mettre à jour le prix
-          select.addEventListener('change', function() {
-            const selectedOption = this.options[this.selectedIndex];
-            const price = parseFloat(selectedOption.getAttribute('data-price'));
-            const priceCell = this.closest('tr').querySelector('.price');
-            priceCell.textContent = price === 0 ? '$0' : '$' + price;
-            updateTotal();
-          });
-        });
-      }
-
-      // Mettre à jour le total
-      const totalPriceEl = document.getElementById("total-price");
-
-      function updateTotal() {
-        let total = 0;
-        document.querySelectorAll("tr[data-component]").forEach(row => {
-          const select = row.querySelector('.component-select');
-          if (select && select.selectedIndex > 0) {
-            const price = parseFloat(select.options[select.selectedIndex].getAttribute('data-price'));
-            total += price;
-          }
-        });
-        totalPriceEl.textContent = total.toFixed(2) + " $";
-        totalPriceEl.classList.add("glow");
-        setTimeout(() => totalPriceEl.classList.remove("glow"), 400);
-      }
-
-      // Sauvegarder un template
-      document.getElementById("save-template-btn").addEventListener("click", async () => {
-        const userId = localStorage.getItem("user_id_number");
-        if (!userId) {
-          alert("❌ Vous devez être connecté pour enregistrer un template.");
-          return;
-        }
-
-        const components = {};
-        let hasSelection = false;
-
-        document.querySelectorAll("tr[data-component]").forEach(row => {
-          const component = row.dataset.component;
-          const select = row.querySelector('.component-select');
-          const selectedOption = select.options[select.selectedIndex];
-          
-          components[component] = {
-            selected: selectedOption.value || "Aucun",
-            price: parseFloat(selectedOption.getAttribute('data-price')) || 0
-          };
-
-          if (selectedOption.value && parseFloat(selectedOption.getAttribute('data-price')) > 0) {
-            hasSelection = true;
-          }
-        });
-
-        if (!hasSelection) {
-          alert("❌ Vous devez sélectionner au moins un composant avant d'enregistrer le template.");
-          return;
-        }
-
-        const totalPrice = Object.values(components).reduce((sum, c) => sum + c.price, 0);
-
-        const templateName = prompt("Nom du template :", "Mon Template");
-        if (!templateName) return;
-
-        const response = await fetch("http://localhost:3000/api/templates", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user_id_number: userId,
-            template_name: templateName,
-            components,
-            total_price: totalPrice
-          })
-        });
-
-        const result = await response.json();
-
-        if (response.ok) {
-          alert("✅ Template enregistré avec succès !");
-        } else {
-          alert("❌ Erreur : " + result.error);
-        }
+/* -------------------------------------------
+   INITIALISATION DES SELECTS
+------------------------------------------- */
+function initDropdowns() {
+  document.querySelectorAll(".component-select").forEach(select => {
+    const items = componentsDB[select.dataset.component];
+    if (items) {
+      items.forEach(i => {
+        const opt = document.createElement("option");
+        opt.value = i.name;
+        opt.textContent = i.name;
+        opt.dataset.price = i.price;
+        select.appendChild(opt);
       });
+    }
 
-      // Voir les templates
-      document.getElementById("show-templates-btn").addEventListener("click", async () => {
-        const userId = localStorage.getItem("user_id_number");
-        if (!userId) {
-          alert("❌ Vous devez être connecté pour voir vos templates.");
-          return;
-        }
+    select.onchange = () => {
+      const p = Number(select.options[select.selectedIndex].dataset.price);
+      select.closest("tr").querySelector(".price").textContent = `$${p}`;
+      updateTotal();
+    };
+  });
+}
 
-        const modal = document.getElementById("templates-modal");
-        const container = document.getElementById("templates-container");
+/* -------------------------------------------
+   TOTAL
+------------------------------------------- */
+function updateTotal() {
+  let t = 0;
+  document.querySelectorAll(".price").forEach(p => {
+    t += Number(p.textContent.replace("$",""));
+  });
+  document.getElementById("total-price").textContent = `${t} $`;
+}
 
-        // Récupérer templates du backend
-        const response = await fetch(`http://localhost:3000/api/templates/${userId}`);
-        const data = await response.json();
+/* -------------------------------------------
+   SAUVEGARDE TEMPLATE
+------------------------------------------- */
+document.getElementById("save-template-btn").onclick = async () => {
+  const userId = getUserIdForTemplates();
 
-        if (!response.ok) {
-          alert("❌ Erreur : " + data.error);
-          return;
-        }
+  const build = getCurrentBuild();
+  const name = prompt("Nom du template :", "Mon PC");
+  if (!name) return;
 
-        // Affichage
-        modal.classList.remove("hidden");
-        container.innerHTML = "";
+  try {
+    const res = await fetch("/api/prebuilt", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        templateName: name,
+        user_id_number: userId,
+        components: Object.entries(build.components)
+          .filter(([_, c]) => c.price > 0)
+          .map(([n, c]) => ({ component_name: n, selected_option: c.name, price: c.price }))
+      })
+    });
 
-        if (data.length === 0) {
-          container.innerHTML = "<p>Aucun template enregistré.</p>";
-          return;
-        }
+    const out = await res.json();
+    if (!res.ok) throw out;
+    alert("✅ Template enregistré !");
+  } catch (err) {
+    alert("❌ Erreur : Impossible de créer le template");
+  }
+};
 
-        data.forEach(tpl => {
-          const tempDiv = document.createElement("div");
-          tempDiv.classList.add("template-item");
+/* -------------------------------------------
+   AFFICHER LES TEMPLATES
+------------------------------------------- */
+document.getElementById("show-templates-btn").onclick = async () => {
+  const modal = document.getElementById("templates-modal");
+  const container = document.getElementById("templates-container");
 
-          tempDiv.innerHTML = `
-            <strong>${tpl.template_name}</strong> — ${tpl.total_price} $
-            <button class="load-template-btn" data-id="${tpl.template_id}">Charger</button>
-            <button class="delete-template-btn" data-id="${tpl.template_id}">Supprimer</button>
-          `;
+  try {
+    const res = await fetch("/api/prebuilt", { credentials: "include" });
+    const data = await res.json();
+    if (!res.ok) throw data;
 
-          container.appendChild(tempDiv);
+    modal.classList.remove("hidden");
+    container.innerHTML = data.length ? "" : "<p>Aucun template enregistré.</p>";
+
+    data.forEach(t => {
+      container.insertAdjacentHTML("beforeend", `
+        <div class="template-item">
+          <strong>${t.template_name}</strong> — ${t.total_price} $
+          <button class="load-template-btn" data-id="${t.template_id}">Charger</button>
+          <button class="delete-template-btn" data-id="${t.template_id}">🗑 Supprimer</button>
+        </div>
+      `);
+    });
+
+    initLoadButtons();
+    initDeleteButtons();
+
+  } catch (err) {
+    alert("❌ Erreur : Impossible de charger les templates");
+  }
+};
+
+/* -------------------------------------------
+   CHARGEMENT TEMPLATE
+------------------------------------------- */
+function initLoadButtons() {
+  document.querySelectorAll(".load-template-btn").forEach(btn => {
+    btn.onclick = async () => {
+      const id = btn.dataset.id;
+      const res = await fetch(`/api/prebuilt/${id}`, { credentials: "include" });
+      const tpl = await res.json();
+      if (!res.ok) return alert("❌ Impossible de charger le template");
+
+      const map = {};
+      tpl.components.forEach(c => map[c.component_name] = { selected: c.selected_option, price: c.price });
+
+      applyTemplateToUI(map);
+      document.getElementById("templates-modal").classList.add("hidden");
+    };
+  });
+}
+
+/* -------------------------------------------
+   SUPPRESSION TEMPLATE
+------------------------------------------- */
+function initDeleteButtons() {
+  document.querySelectorAll(".delete-template-btn").forEach(btn => {
+    btn.onclick = async () => {
+      if (!confirm("Voulez-vous vraiment supprimer ce template ?")) return;
+
+      const id = btn.dataset.id;
+
+      try {
+        const res = await fetch(`/api/prebuilt/${id}`, {
+          method: "DELETE",
+          credentials: "include"
         });
 
-        // Bouton Charger
-        document.querySelectorAll(".load-template-btn").forEach(btn => {
-          btn.addEventListener("click", async () => {
-            const templateId = btn.dataset.id;
-            const res = await fetch(`http://localhost:3000/api/template/${templateId}`);
-            const tpl = await res.json();
+        const out = await res.json();
+        if (!res.ok) throw out;
 
-            if (!res.ok) {
-              alert("❌ Impossible de charger le template.");
-              return;
-            }
-
-            applyTemplateToUI(tpl.components);
-            modal.classList.add("hidden");
-            alert("✅ Template chargé !");
-          });
-        });
-
-        // Bouton Supprimer
-        document.querySelectorAll(".delete-template-btn").forEach(btn => {
-          btn.addEventListener("click", async () => {
-            const templateId = btn.dataset.id;
-            const confirmDelete = confirm("Voulez-vous vraiment supprimer ce template ?");
-            if (!confirmDelete) return;
-
-            const res = await fetch(`http://localhost:3000/api/template/${templateId}`, {
-              method: "DELETE"
-            });
-
-            const result = await res.json();
-            if (res.ok) {
-              alert("✅ Template supprimé !");
-              btn.parentElement.remove();
-            } else {
-              alert("❌ Impossible de supprimer : " + result.error);
-            }
-          });
-        });
-      });
-
-      // Fermer le modal
-      document.getElementById("close-modal").addEventListener("click", () => {
-        document.getElementById("templates-modal").classList.add("hidden");
-      });
-
-      // Appliquer un template
-      function applyTemplateToUI(components) {
-        document.querySelectorAll("tr[data-component]").forEach(row => {
-          const comp = row.dataset.component;
-          const value = components[comp]?.selected;
-          if (!value || value === "Aucun") return;
-
-          const select = row.querySelector('.component-select');
-          for (let i = 0; i < select.options.length; i++) {
-            if (select.options[i].value === value) {
-              select.selectedIndex = i;
-              const price = parseFloat(select.options[i].getAttribute('data-price'));
-              row.querySelector(".price").textContent = '$' + price;
-              break;
-            }
-          }
-        });
-        updateTotal();
+        btn.parentElement.remove();
+        alert("🗑 Template supprimé !");
+      } catch (err) {
+        alert("❌ Erreur : Impossible de supprimer le template");
       }
+    };
+  });
+}
 
-      // Initialiser au chargement
-     generateRows();   
-    initDropdowns();  
+/* -------------------------------------------
+   APPLIQUER TEMPLATE DANS LE UI
+------------------------------------------- */
+function applyTemplateToUI(components) {
+  document.querySelectorAll("tr[data-component]").forEach(row => {
+    const c = components[row.dataset.component];
+    if (!c) return;
 
-    </script>
+    const select = row.querySelector("select");
+    [...select.options].forEach((opt,i)=>{
+      if (opt.value === c.selected) {
+        select.selectedIndex = i;
+        row.querySelector(".price").textContent = `$${c.price}`;
+      }
+    });
+  });
+  updateTotal();
+}
+
+/* -------------------------------------------
+   INIT
+------------------------------------------- */
+generateRows();
+initDropdowns();
+updateTotal();
+
+document.getElementById("close-modal").onclick = () =>
+  document.getElementById("templates-modal").classList.add("hidden");
+</script>
+
+
   </body>
 </html>

@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PC4U – Panier</title>
+  <link rel="stylesheet" href="./style/style.css" />
+  <link rel="stylesheet" href="./style/style_build.css" />
+  <style>
+    /* small overrides for cart layout */
+    .cart-container { max-width: 980px; margin: 36px auto; padding: 18px; }
+    .cart-item { background: rgba(17,24,39,0.7); border: 1px solid rgba(148,163,184,0.06); padding: 14px; border-radius: 12px; margin-bottom: 12px; }
+    .cart-item h4 { margin: 0 0 8px; font-size: 16px; }
+    .cart-grid { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; }
+    .comp-list { font-size: 14px; color: var(--text-muted); margin: 0; padding-left: 14px; }
+    .cart-actions { display:flex; gap:10px; align-items:center; }
+    .btn-ghost { background: transparent; border:1px solid rgba(255,255,255,0.06); color: #fff; padding:8px 12px; border-radius:8px; cursor:pointer; }
+    .btn-primary { background: linear-gradient(90deg,#4f46e5,#8b5cf6); color:#fff; border:none; padding:10px 16px; border-radius:12px; cursor:pointer; }
+    .empty { text-align:center; color:var(--text-muted); padding:40px 0; }
+  </style>
+</head>
+<body>
+   <header class="site-header">
+    <div class="header-inner">
+      <a class="header-brand" href="./index.html">
+        <img src="./assets/img/log3.png" alt="PC4U" />
+        
+      </a>
+      <nav class="nav">
+       <nav class="nav">
+        <a href="./build.html">Configurateur</a>
+        <a href="./products.html">Produits</a>
+        <a href="./Shopping-cart.html">Panier</a>
+        <a href="./login.html">Log in</a>
+        <a href="./register.html">Register</a>
+        
+      </nav>
+      </nav>
+    </div>
+  </header>
+
+  <main class="cart-container">
+    <h1>Panier</h1>
+    <div id="cartList"></div>
+
+    <div id="cartSummary" style="text-align:right; margin-top:16px;">
+      <strong>Total : </strong><span id="cartTotal">0 $</span>
+    </div>
+
+    <div style="margin-top:18px; display:flex; gap:12px; justify-content:flex-end;">
+      <button id="clearCartBtn" class="btn-ghost">Vider le panier</button>
+      <button id="confirmOrderBtn" class="btn-primary">Confirmer la commande</button>
+    </div>
+  </main>
+
+  <footer>© PC4U — Tous droits réservés.</footer>
+
+  <script>
+    function renderCart() {
+      const cart = JSON.parse(localStorage.getItem('pc4u_cart') || '[]');
+      const container = document.getElementById('cartList');
+      container.innerHTML = '';
+      if (cart.length === 0) {
+        container.innerHTML = '<div class="empty">Votre panier est vide. Ajoutez une configuration depuis le configurateur.</div>';
+        document.getElementById('cartTotal').textContent = '0 $';
+        return;
+      }
+
+      let grandTotal = 0;
+      cart.forEach((entry, idx) => {
+        grandTotal += entry.total;
+        const item = document.createElement('div');
+        item.className = 'cart-item';
+        const comps = Object.entries(entry.components).map(([k,v]) => `<li>${k}: ${v.name} — ${v.price > 0 ? v.price + ' $' : '-'}</li>`).join('');
+        item.innerHTML = `
+          <div class="cart-grid">
+            <div>
+              <h4>Configuration #${idx + 1} — <small style="color:var(--text-muted); font-weight:600">${new Date(entry.created_at).toLocaleString()}</small></h4>
+              <ul class="comp-list">${comps}</ul>
+            </div>
+            <div class="cart-actions">
+              <strong style="margin-right:12px;">${entry.total} $</strong>
+              <button class="btn-ghost remove-btn" data-id="${entry.id}">Supprimer</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+
+      document.getElementById('cartTotal').textContent = grandTotal.toFixed(2) + ' $';
+
+      // wire remove buttons
+      document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = parseInt(btn.dataset.id);
+          removeFromCart(id);
+        });
+      });
+    }
+
+    function removeFromCart(id) {
+      let cart = JSON.parse(localStorage.getItem('pc4u_cart') || '[]');
+      cart = cart.filter(e => e.id !== id);
+      localStorage.setItem('pc4u_cart', JSON.stringify(cart));
+      renderCart();
+    }
+
+    document.getElementById('clearCartBtn').addEventListener('click', () => {
+      if (!confirm('Vider le panier ?')) return;
+      localStorage.removeItem('pc4u_cart');
+      renderCart();
+    });
+
+    // Confirm order: save last_order and clear cart, then redirect to confirmation page
+    document.getElementById('confirmOrderBtn').addEventListener('click', () => {
+      const cart = JSON.parse(localStorage.getItem('pc4u_cart') || '[]');
+      if (cart.length === 0) { alert('Panier vide.'); return; }
+      const total = cart.reduce((s, e) => s + e.total, 0);
+      const order = {
+        order_id: 'PC4U-' + Date.now().toString(36).toUpperCase(),
+        created_at: new Date().toISOString(),
+        items: cart,
+        total: parseFloat(total.toFixed(2))
+      };
+      localStorage.setItem('pc4u_last_order', JSON.stringify(order));
+      // clear cart
+      localStorage.removeItem('pc4u_cart');
+      // redirect to confirmation
+      window.location.href = './order-confirmation.html';
+    });
+
+    // initial render
+    
+    renderCart();
+  </script>
+</body>
+</html>

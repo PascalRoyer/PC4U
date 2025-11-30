@@ -11,16 +11,21 @@ const config = {
   options: { encrypt: false, trustServerCertificate: true },
 };
 
-// Petite fonction avec retry pour laisser le temps au conteneur SQL de démarrer
+let pool = null;
+
+// Connexion avec retry pour laisser le temps au conteneur SQL de démarrer
 async function connectDB(retries = 10, delayMs = 5000) {
   try {
-    await sql.connect(config);
+    pool = await sql.connect(config);
     console.log('✅ Connecté à SQL Server');
+    return pool;
   } catch (err) {
     console.error('❌ Erreur SQL:', err.message);
 
     if (retries > 0) {
-      console.log(`🔁 Nouvelle tentative dans ${delayMs / 1000}s... (reste ${retries - 1} essais)`);
+      console.log(
+        `🔁 Nouvelle tentative dans ${delayMs / 1000}s... (reste ${retries - 1} essais)`
+      );
       setTimeout(() => connectDB(retries - 1, delayMs), delayMs);
     } else {
       console.error('⛔ Impossible de se connecter à SQL Server après plusieurs essais.');
@@ -28,4 +33,11 @@ async function connectDB(retries = 10, delayMs = 5000) {
   }
 }
 
-module.exports = { sql, connectDB };
+function getPool() {
+  if (!pool) {
+    throw new Error('Base de données non connectée ! Appelle connectDB() au démarrage.');
+  }
+  return pool;
+}
+
+module.exports = { sql, connectDB, getPool };
