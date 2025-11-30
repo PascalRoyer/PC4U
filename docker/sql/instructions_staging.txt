@@ -4,14 +4,14 @@ Ici sont détaillées les instructions pour insérer les fichiers csv dans votre
     Chaque table doit utiliser uniquement des NVARCHAR avec des longueurs larges,
     permettre des NULL et aucune clé primaire.
     CREATE TABLE dbo.Staging_Monitors (
-        name NVARCHAR(MAX) NOT NULL,
-        price NVARCHAR(100) NOT NULL,
-        screen_size NVARCHAR(100) NOT NULL,
-        resolution NVARCHAR(400) NOT NULL,
-        refresh_rate NVARCHAR(50) NOT NULL,
-        response_time NVARCHAR(50) NOT NULL,
-        panel_type NVARCHAR(200) NOT NULL,
-        aspect_ratio NVARCHAR(50) NOT NULL
+        name NVARCHAR(MAX) NULL,
+        price NVARCHAR(100) NULL,
+        screen_size NVARCHAR(100) NULL,
+        resolution NVARCHAR(400) NULL,
+        refresh_rate NVARCHAR(50) NULL,
+        response_time NVARCHAR(50) NULL,
+        panel_type NVARCHAR(200) NULL,
+        aspect_ratio NVARCHAR(50) NULL
     );
 2. Importation des datasets
     Pour certain datasets, il sera nécessaire de les prétraiter pour que l'Importation
@@ -44,7 +44,7 @@ Ici sont détaillées les instructions pour insérer les fichiers csv dans votre
         external hard drive encore une fois, include la colonne "interface" pour ces 
         paramètres.
         Choisir Microsoft OLE DB Provider for SQL Server et choisir PC4U comme 
-        bd puis changer le nom dans la table pour Stating_XXX tel que dans le init,
+        bd puis changer le nom dans la table pour Staging_XXX tel que dans le init,
         sinon un nouveau fichier sera créé.
         Poursuivre jusqu'à l'insertion.
 
@@ -72,6 +72,7 @@ Ici sont détaillées les instructions pour insérer les fichiers csv dans votre
 				WHEN resolution LIKE '51202880' THEN '5120x2880'
                 WHEN resolution LIKE '25601080' THEN '2560x1080'
 				WHEN resolution LIKE '25601600' THEN '2560x1600'
+                WHEN resolution LIKE '1360768' THEN '1360x768'
                 WHEN resolution LIKE '1366768' THEN '1366x768'
                 WHEN resolution LIKE '1024768' THEN '1024x768'
 				WHEN resolution LIKE '1440900' THEN '1440x900'

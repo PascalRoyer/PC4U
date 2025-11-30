@@ -3,6 +3,10 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { sql } = require('../db');
+const authMiddleware = require('../middleware/auth');
+function uniquePseudo() {
+    return "user_" + Math.random().toString(36).substring(2,10);
+} /* permet générer un pseudo random si l'utilisateur n'en donne pas */
 
 const router = express.Router();
 
@@ -26,19 +30,24 @@ router.post('/register', async (req, res) => {
       return res.status(409).json({ error: 'Email déjà utilisé' });
     }
 
+    // génération du pseudo
+    const userPseudo = (user_pseudo && user_pseudo.trim().length > 0) 
+      ? user_pseudo.trim()
+      : uniquePseudo();
+
     //  hash du mot de passe
     const hashed = await bcrypt.hash(user_password, 10);
 
     
     request = new sql.Request();
     await request
-      .input('pseudo', sql.NVarChar, user_pseudo || 'user')
+      .input('pseudo', sql.NVarChar, userPseudo)
       .input('email', sql.NVarChar, email)
       .input('pwd', sql.NVarChar, hashed)
       .query(`
         INSERT INTO Users (user_pseudo, email, user_password, user_type_id)
-        VALUES (@pseudo, @email, @pwd, 1)
-      `);
+        VALUES (@pseudo, @email, @pwd, 3)
+      `); /* 3 pour le user_type_id, sinon on crée des superadmin pour les clients */
 
     res.status(201).json({ success: true, message: 'Utilisateur créé ✅' });
   } catch (err) {
@@ -99,6 +108,17 @@ router.post('/login', async (req, res) => {
     console.error('Login error:', err);
     res.status(500).json({ error: 'Erreur serveur', detail: err.message });
   }
+});
+// GET /api/auth/me
+// Nécessite un header Authorization: Bearer <token>
+router.get('/me', authMiddleware, (req, res) => {
+  // req.user vient du token décodé dans le middleware
+  const { id, pseudo, email } = req.user;
+
+  res.json({
+    success: true,
+    user: { id, pseudo, email },
+  });
 });
 
 module.exports = router;

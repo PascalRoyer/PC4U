@@ -2,7 +2,10 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+
+
 require('dotenv').config();
+
 
 // DB
 const { connectDB } = require('./db');
@@ -10,6 +13,7 @@ const { connectDB } = require('./db');
 // Routes
 const authRoutes = require('./routes/auth');
 const prebuiltRoutes = require('./routes/prebuilt');
+const productsRoutes = require('./routes/products');
 
 const app = express();
 
@@ -30,6 +34,7 @@ app.get('/api/health', (_, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/prebuilt', prebuiltRoutes);
+app.use('/api/products', productsRoutes);
 
 // Frontend statique
 const FRONTEND_DIR = path.join(__dirname, '../../frontend');
