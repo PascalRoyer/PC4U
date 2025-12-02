@@ -3,9 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-
 require('dotenv').config();
-
 
 // DB
 const { connectDB } = require('./db');
@@ -14,14 +12,17 @@ const { connectDB } = require('./db');
 const authRoutes = require('./routes/auth');
 const prebuiltRoutes = require('./routes/prebuilt');
 const productsRoutes = require('./routes/products');
+// ❌ NE PAS METTRE ÇA : const configuratorRoutes = require('./routes/configurator');
 
 const app = express();
 
 // Middlewares
-app.use(cors({
-  origin: 'http://localhost:8080', // ton frontend
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: 'http://localhost:8080', // ton frontend
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // Connexion à la base SQL Server
@@ -35,6 +36,7 @@ app.get('/api/health', (_, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/prebuilt', prebuiltRoutes);
 app.use('/api/products', productsRoutes);
+// ❌ NE PAS METTRE ÇA : app.use('/api/configurator', configuratorRoutes);
 
 // Frontend statique
 const FRONTEND_DIR = path.join(__dirname, '../../frontend');

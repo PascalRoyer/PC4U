@@ -6,57 +6,51 @@
     <title>PC4U – Configurateur</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="./style/style.css" />
-    <link rel="stylesheet" href="./style/style_build.css"/>
+    <link rel="stylesheet" href="./style/style_build.css" />
   </head>
-  
-  <!-- Modal pour afficher les templates -->
-  <div id="templates-modal" class="modal hidden">
-    <div class="modal-content">
-      <span id="close-modal" class="close-btn">&times;</span>
-      <h3>Templates</h3>
-      <div id="templates-container"></div>
-    </div>
-  </div>
 
   <body>
-
-     <header class="site-header">
-    <div class="header-inner">
-      <a class="header-brand" href="./index.html">
-        <img src="./assets/img/log3.png" alt="PC4U" />
-        
-      </a>
-      <nav class="nav">
-       <nav class="nav">
-        <a href="./build.html">Configurateur</a>
-        <a href="./products.html">Produits</a>
-        <a href="./Shopping-cart.html">Panier</a>
-        <a href="./login.html">Log in</a>
-        <a href="./register.html">Register</a>
-        
-      </nav>
-      </nav>
+    <!-- Modal pour afficher les templates -->
+    <div id="templates-modal" class="modal hidden">
+      <div class="modal-content">
+        <span id="close-modal" class="close-btn">&times;</span>
+        <h3>Templates</h3>
+        <div id="templates-container"></div>
+      </div>
     </div>
-  </header>
 
-
-
-    
-
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="header-brand" href="./index.html">
+          <img src="./assets/img/log3.png" alt="PC4U" />
+        </a>
+        <nav class="nav">
+          <a href="./build.html">Configurateur</a>
+          <a href="./products.html">Produits</a>
+          <a href="./Shopping-cart.html">Panier</a>
+          <a href="./login.html">Log in</a>
+          <a href="./register.html">Register</a>
+        </nav>
+      </div>
+    </header>
 
     <main class="configurator">
       <section class="intro">
         <h1>Bienvenue au configurateur PC4U</h1>
         <p>Sélectionne les composants pour créer ton PC sur mesure.</p>
       </section>
-      
+
       <section class="table-section">
         <h2>Choisis tes pièces</h2>
         <div class="template-buttons">
-          <button id="show-templates-btn" class="template-btn">📂 Voir les templates</button>
-          <button id="save-template-btn" class="template-btn">➕ Ajouter un template</button>
+          <button id="show-templates-btn" class="template-btn">
+            📂 Voir les templates
+          </button>
+          <button id="save-template-btn" class="template-btn">
+            ➕ Ajouter un template
+          </button>
         </div>
-        
+
         <table class="config-table">
           <thead>
             <tr>
@@ -65,86 +59,48 @@
               <th>Prix</th>
             </tr>
           </thead>
-          <tbody id="tableBody">
-         </tbody>
+          <tbody id="tableBody"></tbody>
         </table>
 
         <div class="total">
           <strong>Total :</strong> <span id="total-price">0 $</span>
         </div>
-        <div class="table-actions" style="text-align:center; margin-top:14px;">
-          <button id="add-to-cart-btn" class="template-btn">🛒 Ajouter au panier</button>
+        <div class="table-actions" style="text-align: center; margin-top: 14px">
+          <button id="add-to-cart-btn" class="template-btn">
+            🛒 Ajouter au panier
+          </button>
         </div>
       </section>
     </main>
-    
-   
-    
-
- 
-
-    
 
     <footer>© PC4U — Tous droits réservés.</footer>
 
-          <script>
+    <script>
 /* -------------------------------------------
-   BASE DE DONNÉES LOCALE DES COMPOSANTS
+   CATEGORIES venant de la base de données
+------------------------------------------- */
+const dbCategoryMap = {
+  cpu: 'CPU',
+  motherboard: 'Motherboards',
+  ram: 'Memory_RAM',
+  storage: 'Storage',
+  gpu: 'GPU',
+  psu: 'Power_supply',
+  case: 'Cases'
+};
+
+/* -------------------------------------------
+   COMPOSANTS LOCAUX (pas dans la DB)
 ------------------------------------------- */
 const componentsDB = {
-  cpu: [
-    { name: 'Intel Core i9-13900K', price: 589 },
-    { name: 'AMD Ryzen 9 7950X', price: 549 },
-    { name: 'Intel Core i7-13700K', price: 409 },
-    { name: 'AMD Ryzen 7 7700X', price: 349 },
-    { name: 'Intel Core i5-13600K', price: 319 }
-  ],
-  gpu: [
-    { name: 'NVIDIA RTX 4090', price: 1599 },
-    { name: 'NVIDIA RTX 4080', price: 1199 },
-    { name: 'AMD Radeon RX 7900 XTX', price: 999 },
-    { name: 'NVIDIA RTX 4070 Ti', price: 799 },
-    { name: 'AMD Radeon RX 7900 XT', price: 849 }
-  ],
-  ram: [
-    { name: 'Corsair Vengeance 32GB DDR5', price: 159 },
-    { name: 'G.Skill Trident Z5 32GB DDR5', price: 169 },
-    { name: 'Kingston Fury 16GB DDR5', price: 89 },
-    { name: 'Corsair Dominator 64GB DDR5', price: 329 }
-  ],
-  ssd: [
-    { name: 'Samsung 990 Pro 2TB', price: 189 },
-    { name: 'WD Black SN850X 2TB', price: 179 },
-    { name: 'Samsung 980 Pro 1TB', price: 99 },
-    { name: 'Crucial P5 Plus 2TB', price: 149 }
+  cooler: [
+    { name: 'Cooler Master Hyper 212', price: 45 },
+    { name: 'Noctua NH-D15', price: 120 },
+    { name: 'NZXT Kraken X63', price: 180 }
   ],
   os: [
     { name: 'Windows 11 Home', price: 139 },
     { name: 'Windows 11 Pro', price: 199 }
-  ],
-  case: [
-    { name: 'NZXT H510 Elite', price: 149 },
-    { name: 'Corsair 4000D Airflow', price: 104 },
-    { name: 'Lian Li O11 Dynamic', price: 139 },
-    { name: 'Fractal Design Meshify C', price: 89 }
-  ],
-  monitor: [
-    { name: 'ASUS ROG Swift 27" 1440p 165Hz', price: 449 },
-    { name: 'LG UltraGear 24" 1080p 144Hz', price: 249 },
-    { name: 'Samsung Odyssey G7 32" 1440p 240Hz', price: 699 },
-    { name: 'Dell S2721DGF 27" 1440p 165Hz', price: 429 }
-  ],
-  keyboard: [
-    { name: 'Corsair K70 RGB', price: 169 },
-    { name: 'Logitech G915 TKL', price: 229 },
-    { name: 'Razer BlackWidow V3', price: 139 },
-    { name: 'Keychron K8', price: 89 }
-  ],
-  mouse: [
-    { name: 'Logitech G Pro X Superlight', price: 159 },
-    { name: 'Razer DeathAdder V3', price: 69 },
-    { name: 'SteelSeries Rival 3', price: 29 },
-    { name: 'Corsair Dark Core RGB', price: 89 }
   ]
 };
 
@@ -160,11 +116,11 @@ const componentList = {
   psu: { label: "Alimentation", icon: "./assets/img/build/PSU.png" },
   case: { label: "Boîtier", icon: "./assets/img/build/Case.png" },
   cooler: { label: "Refroidissement", icon: "./assets/img/build/cooling.png" },
-  os: { label: "Système d'exploitation", icon: "./assets/img/build/os.png" },
+  os: { label: "Système d'exploitation", icon: "./assets/img/build/os.png" }
 };
 
 /* -------------------------------------------
-   UTILISATEUR CONNECTÉ
+   UTILISATEUR CONNECTÉ (pour les templates)
 ------------------------------------------- */
 function getUserIdForTemplates() {
   const keys = ["user_id_number", "user_id", "id", "userId"];
@@ -184,8 +140,11 @@ function getCurrentBuild() {
     const key = row.dataset.component;
     const select = row.querySelector(".component-select");
     const opt = select.options[select.selectedIndex];
-    const name = opt?.value || "Aucun";
+
+    // IMPORTANT : on prend le texte (nom du produit), pas la value
+    const name = opt?.textContent || "Aucun";
     const price = Number(opt?.dataset.price || 0);
+
     build.components[key] = { name, price };
     build.total += price;
   });
@@ -198,7 +157,10 @@ function getCurrentBuild() {
 function addToCartAndRedirect() {
   const build = getCurrentBuild();
   const ok = Object.values(build.components).some(c => c.price > 0);
-  if (!ok) return alert("Sélectionnez au moins un composant !");
+  if (!ok) {
+    alert("Sélectionnez au moins un composant !");
+    return;
+  }
   const cart = JSON.parse(localStorage.getItem("pc4u_cart") || "[]");
   cart.push({ id: Date.now(), ...build });
   localStorage.setItem("pc4u_cart", JSON.stringify(cart));
@@ -206,7 +168,9 @@ function addToCartAndRedirect() {
 }
 
 const addToCartStaticBtn = document.getElementById("add-to-cart-btn");
-if (addToCartStaticBtn) addToCartStaticBtn.addEventListener("click", addToCartAndRedirect);
+if (addToCartStaticBtn) {
+  addToCartStaticBtn.addEventListener("click", addToCartAndRedirect);
+}
 
 /* -------------------------------------------
    GÉNÉRATION DES LIGNES DU TABLEAU
@@ -220,37 +184,126 @@ function generateRows() {
     const row = document.createElement("tr");
     row.dataset.component = key;
     row.innerHTML = `
-      <td><img src="${c.icon}" class="icon-build"> ${c.label}</td>
-      <td><select class="component-select" data-component="${key}">
-            <option value="" data-price="0">Ajouter ${c.label}...</option>
-          </select>
+      <td>
+        <img src="${c.icon}" class="icon-build"> ${c.label}
       </td>
-      <td class="price">$0</td>`;
+      <td>
+        <input
+          type="text"
+          class="component-search"
+          data-component="${key}"
+          placeholder="Rechercher un ${c.label}..."
+          style="width:100%; margin-bottom:6px;"
+        />
+        <select class="component-select" data-component="${key}">
+          <option value="" data-price="0">Ajouter ${c.label}...</option>
+        </select>
+      </td>
+      <td class="price">$0</td>
+    `;
     tbody.appendChild(row);
+  }
+}
+
+/* -------------------------------------------
+   CHARGER LES PRODUITS DE LA DB POUR UN TYPE
+------------------------------------------- */
+async function fetchProductsForComponent(key) {
+  const category = dbCategoryMap[key];
+  // pas de catégorie DB -> on utilisera les données locales
+  if (!category) {
+    return (componentsDB[key] || []).map(item => ({
+      id: null,
+      name: item.name,
+      price: item.price || 0
+    }));
+  }
+
+  try {
+    const res = await fetch(
+      `/api/products/configurator?category=${encodeURIComponent(category)}`,
+      { credentials: "include" }
+    );
+    const data = await res.json();
+    if (!res.ok) throw data;
+
+    // on normalise
+    return data.map(p => ({
+      id: p.product_id,
+      name: p.product_name,
+      price: Number(p.product_price) || 0
+    }));
+  } catch (err) {
+    console.error("Erreur chargement produits configurateur", key, err);
+    alert("Impossible de charger les produits du configurateur.");
+    return [];
   }
 }
 
 /* -------------------------------------------
    INITIALISATION DES SELECTS
 ------------------------------------------- */
-function initDropdowns() {
-  document.querySelectorAll(".component-select").forEach(select => {
-    const items = componentsDB[select.dataset.component];
-    if (items) {
-      items.forEach(i => {
-        const opt = document.createElement("option");
-        opt.value = i.name;
-        opt.textContent = i.name;
-        opt.dataset.price = i.price;
-        select.appendChild(opt);
-      });
-    }
+async function initDropdowns() {
+  const selects = document.querySelectorAll(".component-select");
+
+  for (const select of selects) {
+    const key = select.dataset.component;
+    const items = await fetchProductsForComponent(key);
+
+    items.forEach(i => {
+      const opt = document.createElement("option");
+      opt.value = i.id != null ? String(i.id) : i.name; // id si DB, sinon nom
+      opt.textContent = i.name;                         // seulement le nom
+      opt.dataset.price = i.price ?? 0;
+      select.appendChild(opt);
+    });
 
     select.onchange = () => {
-      const p = Number(select.options[select.selectedIndex].dataset.price);
+      const p = Number(select.options[select.selectedIndex].dataset.price || 0);
       select.closest("tr").querySelector(".price").textContent = `$${p}`;
       updateTotal();
     };
+  }
+}
+
+/* -------------------------------------------
+   RECHERCHE DANS LES LISTES
+------------------------------------------- */
+function initSearchInputs() {
+  document.querySelectorAll(".component-search").forEach(input => {
+    const compKey = input.dataset.component;
+    const select = document.querySelector(
+      `select.component-select[data-component="${compKey}"]`
+    );
+
+    input.addEventListener("input", () => {
+      const q = input.value.trim().toLowerCase();
+      let firstMatchIndex = 0;
+
+      Array.from(select.options).forEach((opt, idx) => {
+        if (idx === 0) return; // on garde "Ajouter ..."
+
+        const text = opt.textContent.toLowerCase();
+        const match = !q || text.includes(q);
+
+        opt.hidden = !match;
+
+        if (q && match && firstMatchIndex === 0) {
+          firstMatchIndex = idx;
+        }
+      });
+
+      if (q && firstMatchIndex > 0) {
+        select.selectedIndex = firstMatchIndex;
+        select.dispatchEvent(new Event("change"));
+      }
+
+      if (!q) {
+        Array.from(select.options).forEach(opt => (opt.hidden = false));
+        select.selectedIndex = 0;
+        select.dispatchEvent(new Event("change"));
+      }
+    });
   });
 }
 
@@ -260,7 +313,7 @@ function initDropdowns() {
 function updateTotal() {
   let t = 0;
   document.querySelectorAll(".price").forEach(p => {
-    t += Number(p.textContent.replace("$",""));
+    t += Number(p.textContent.replace("$", "").trim() || 0);
   });
   document.getElementById("total-price").textContent = `${t} $`;
 }
@@ -270,7 +323,6 @@ function updateTotal() {
 ------------------------------------------- */
 document.getElementById("save-template-btn").onclick = async () => {
   const userId = getUserIdForTemplates();
-
   const build = getCurrentBuild();
   const name = prompt("Nom du template :", "Mon PC");
   if (!name) return;
@@ -285,7 +337,11 @@ document.getElementById("save-template-btn").onclick = async () => {
         user_id_number: userId,
         components: Object.entries(build.components)
           .filter(([_, c]) => c.price > 0)
-          .map(([n, c]) => ({ component_name: n, selected_option: c.name, price: c.price }))
+          .map(([n, c]) => ({
+            component_name: n,
+            selected_option: c.name, // on stocke le nom
+            price: c.price
+          }))
       })
     });
 
@@ -293,6 +349,7 @@ document.getElementById("save-template-btn").onclick = async () => {
     if (!res.ok) throw out;
     alert("✅ Template enregistré !");
   } catch (err) {
+    console.error(err);
     alert("❌ Erreur : Impossible de créer le template");
   }
 };
@@ -313,19 +370,22 @@ document.getElementById("show-templates-btn").onclick = async () => {
     container.innerHTML = data.length ? "" : "<p>Aucun template enregistré.</p>";
 
     data.forEach(t => {
-      container.insertAdjacentHTML("beforeend", `
+      container.insertAdjacentHTML(
+        "beforeend",
+        `
         <div class="template-item">
           <strong>${t.template_name}</strong> — ${t.total_price} $
           <button class="load-template-btn" data-id="${t.template_id}">Charger</button>
           <button class="delete-template-btn" data-id="${t.template_id}">🗑 Supprimer</button>
         </div>
-      `);
+      `
+      );
     });
 
     initLoadButtons();
     initDeleteButtons();
-
   } catch (err) {
+    console.error(err);
     alert("❌ Erreur : Impossible de charger les templates");
   }
 };
@@ -339,10 +399,18 @@ function initLoadButtons() {
       const id = btn.dataset.id;
       const res = await fetch(`/api/prebuilt/${id}`, { credentials: "include" });
       const tpl = await res.json();
-      if (!res.ok) return alert("❌ Impossible de charger le template");
+      if (!res.ok) {
+        alert("❌ Impossible de charger le template");
+        return;
+      }
 
       const map = {};
-      tpl.components.forEach(c => map[c.component_name] = { selected: c.selected_option, price: c.price });
+      tpl.components.forEach(c => {
+        map[c.component_name] = {
+          selected: c.selected_option,
+          price: c.price
+        };
+      });
 
       applyTemplateToUI(map);
       document.getElementById("templates-modal").classList.add("hidden");
@@ -372,6 +440,7 @@ function initDeleteButtons() {
         btn.parentElement.remove();
         alert("🗑 Template supprimé !");
       } catch (err) {
+        console.error(err);
         alert("❌ Erreur : Impossible de supprimer le template");
       }
     };
@@ -387,8 +456,9 @@ function applyTemplateToUI(components) {
     if (!c) return;
 
     const select = row.querySelector("select");
-    [...select.options].forEach((opt,i)=>{
-      if (opt.value === c.selected) {
+    Array.from(select.options).forEach((opt, i) => {
+      // on compare avec le texte (nom du produit)
+      if (opt.textContent === c.selected) {
         select.selectedIndex = i;
         row.querySelector(".price").textContent = `$${c.price}`;
       }
@@ -401,12 +471,15 @@ function applyTemplateToUI(components) {
    INIT
 ------------------------------------------- */
 generateRows();
-initDropdowns();
-updateTotal();
+initDropdowns().then(() => {
+  initSearchInputs();
+  updateTotal();
+});
 
 document.getElementById("close-modal").onclick = () =>
   document.getElementById("templates-modal").classList.add("hidden");
 </script>
+
 
 
   </body>
