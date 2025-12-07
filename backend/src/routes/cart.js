@@ -1,8 +1,8 @@
 //backend/routes/cart.js
 const express = require('express');
 const { sql } = require('../db');
-const { authMiddleware } = require('../middleware/auth.js');
-const { router } = express.Router();
+const authMiddleware = require('../middleware/auth.js');
+const router = express.Router();
 
 //POST api/cart
 router.post('/', authMiddleware, async (req, res) => {
@@ -22,7 +22,7 @@ router.post('/', authMiddleware, async (req, res) => {
         
         const existing = await request.query(`
             SELECT cart_id, quantity
-            FROM
+            FROM Cart
             WHERE user_id_number = @uid AND product_id = @pid;
         `);
         if (existing.recordset.length > 0) {
@@ -73,7 +73,7 @@ router.get('/', authMiddleware, async (req, res) => {
                 p.product_price,
                 p.image_url
             FROM Cart c
-            JOIN Product p ON p.product_id = c.product_id
+            JOIN Products p ON p.product_id = c.product_id
             WHERE c.user_id_number = @uid
         `);
 
@@ -84,4 +84,45 @@ router.get('/', authMiddleware, async (req, res) => {
     }
 });
 
+//DELETE api/cart/:cartId  (suppression d'une ligne de panier)
+router.delete('/:cartId', authMiddleware, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const cartId = parseInt(req.params.cartId, 10);
+        if (Number.isNaN(cartId)) {
+            return res.status(400).json({ error: 'cart id invalide' });
+        }
+
+        const request = new sql.Request();
+        await request
+            .input('cid', sql.BigInt, cartId)
+            .input('uid', sql.BigInt, userId)
+            .query(`
+                DELETE FROM Cart
+                WHERE cart_id = @cid AND user_id_number = @uid;
+            `);
+        res.json({ success: true });
+    } catch (err) {
+        console.error('DELETE /api/cart/:cartId error', err);
+        res.status(500).json({ error: 'Erreur serveur', detail: err.message });
+    }
+});
+
+//DELETE api/cart (Vider le panier)
+router.delete('/', authMiddleware, async (req, res) => {
+    try {
+        const userId = req.user.id
+        const request = new sql.Request();
+        await request
+            .input('uid', sql.BigInt, userId)
+            .query(`
+                DELETE FROM Cart
+                WHERE user_id_number = @uid;
+            `);
+        res.json({ success: true });
+    } catch (err) {
+        console.error('DELETE /api/cart error', err);
+        res.status(500).json({ error: 'Erreur serveur', detail: err.message });
+    }
+});
 module.exports = router;

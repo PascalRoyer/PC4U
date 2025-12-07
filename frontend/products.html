@@ -821,10 +821,56 @@
           </h3>
           <p>${categoryText}</p>
           <div class="price">${priceText}</div>
-          <button class="btn btn-primary">Ajouter</button>
+          <button class="btn btn-primary btn-add-cart" data-product-id="${prod.product_id}">Ajouter</button>
         `;
 
         productGrid.appendChild(card);
+      });
+    }
+    async function addToCart(productId) {
+      try {
+        const token = (window.PC4UAuth && PC4UAuth.getToken && PC4UAuth.getToken()) ||
+          localStorage.getItem('pc4u_token');
+
+        if (!token) {
+          alert('Connectez-vous pour ajouter des produits au panier.');
+          window.location.href = './login.html';
+          return;
+        }
+        const base = (window.PC4UAuth && PC4UAuth.API_BASE) || 'http://localhost:8080';
+
+        const res = await fetch(`${base}/api/cart`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            product_id: productId,
+            quantity: 1
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Erreur lors de l’ajout au panier');
+        }
+        alert('Produit ajouté au panier');
+      } catch (err) {
+        console.error('addToCart error:', err);
+        alert(err.message);
+      }
+    }
+    if (productGrid) {
+      productGrid.addEventListener('click', (e) => {
+        const btn = e.target.closest('.btn-add-cart');
+        if (!btn) return;
+
+        const productId = Number(btn.dataset.productId);
+        if (!productId) return;
+
+        addToCart(productId);
       });
     }
   </script>
