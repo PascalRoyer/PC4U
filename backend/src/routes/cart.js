@@ -125,4 +125,102 @@ router.delete('/', authMiddleware, async (req, res) => {
         res.status(500).json({ error: 'Erreur serveur', detail: err.message });
     }
 });
+
+//POST api/cart/checkout -> création de transaction
+router.post('/checkout', authMiddleware, async (req, res) => {
+    const userId = req.user.id;
+    const pool = sql;
+
+    const tx = new sql.Transaction();
+    try {
+        await tx.begin();
+        //chargement du panier
+        let request = new sql.Request(tx);
+        request.input('uid', sql.BigInt, userId);
+        const cartResult = await request.query(`
+            SELECT
+            c.cart_id,
+            c.product_id,
+            c.quantity,
+            p.product_price
+            FROM Cart c
+            JOIN Products p ON p.product_id = c.product_id
+            WHERE user_id_number = @uid;
+            `);
+        const items = cartResult.recordset;
+
+        if (!items || items.length === 0) {
+            await tx.rollback();
+            return res.status(400).json({ error: 'Panier vide '});
+        }
+
+        //Calcul du total d'items et de prix
+        let totalItems = 0;
+        let totalCost = 0;
+
+        items.forEach(it => {
+            const qty = (Number(it.quantity || 0));
+            const price = (Number(it.product_price || 0));
+            totalItems += qty;
+            totalCost += qty*price;
+        });
+
+        //Insertion dans la table Transactions et Transaction_details
+        request = new sql.Request();
+        request
+            .input('uid', sql.BigInt, userId)
+            .input('totalItems', sql.Int, totalItems)
+            .input('totalCost', sql.Decimal(10, 2), totalCost);
+
+        const transResult = await request.query(`
+            INSERT INTO Transactions (transaction_date, total_items, total_cost, user_id_number)
+            OUTPUT INSERTED.transaction_id
+            VALUES (SYSUTCDATETIME(), @totalItems, @totalCost, @uid);
+            `);
+
+        const transactionId = transResult.recordset[0].transaction_id;
+
+        //Insertion des détails
+        for (const it of items) {
+            const requestDet = new sql.Request(tx);
+            await requestDet
+                .input('tid', sql.BigInt, transactionId)
+                .input('pid', sql.Int, it.product_id)
+                .input('qty', sql.Int, it.quantity)
+                .input('price', sql.Decimal(10, 2), it.product_price)
+                .query(`
+                    INSERT INTO Transaction_details (transaction_id, product_id, product_quantity, 
+                    price_at_purchase)
+                    VALUES (@tid, @pid, @qty, @price);
+                    `)
+        }
+
+        //Vider la panier
+        request = new sql.Request(tx);
+        await request
+            .input('uid', sql.BigInt, userId)
+            .query(`
+                DELETE FROM Cart WHERE user_id_number = @uid;
+                `);
+        
+        //Commit transaction
+        await tx.commit();
+        
+        return res.json({
+            success: true,
+            transaction_id: transactionId,
+            total_items: totalItems,
+            total_cost: totalCost
+        });
+    } catch (err) {
+        console.error('POST /api/cart/checkout error:', err);
+        try {
+            await tx.rollback();
+        } catch (rbErr) {
+            console.error('Rollback error:', rbErr);
+        }
+        return res.status(500).json({ error: 'Erreur serveur', detail: err.message });
+    }
+});
+
 module.exports = router;

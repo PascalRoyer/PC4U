@@ -80,7 +80,43 @@
       const confirmBtn = document.getElementById('confirmOrderBtn');
       if (confirmBtn) {
         confirmBtn.addEventListener('click', async () => {
-          alert("Ici on pourra appeler une route /api/orders pour créer une commande. Pour l'instant, on se contente d'afficher ce message.");
+          if (!confirm('Confirmer la commande et valider le panier ?')) return;
+
+          const base = getApiBase();
+          const token = getToken();
+          if (!token) {
+            alert('Veuillez vous connecter.');
+            window.location.href = './login.html';
+            return;
+          }
+
+          try {
+            const res = await fetch(`${base}/api/cart/checkout`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            });
+
+            const data = await res.json().catch(() => ({}));
+
+            if(!res.ok) {
+              throw new Error(data.error || data.detail || 'Erreur lors de la validation de la commande.');
+            }
+            //Stockage temporaire pour une page de confirmation
+            localStorage.setItem('pc4u_last_transaction', JSON.stringify(data));
+
+            alert(`Commande confirmée ! Numéro de transaction : ${data.transaction_id}`);
+            // Recharger le panier (qui doit être vide maintenant)
+            await loadCart();
+
+            // Tu peux aussi rediriger vers une page de confirmation dédiée :
+            // window.location.href = './order-confirmation.html';
+          } catch (err) {
+            console.error('Erreur checkout:', err);
+            alert(err.message);
+          }
         });
       }
     });
