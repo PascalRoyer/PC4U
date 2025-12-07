@@ -154,24 +154,86 @@ function getCurrentBuild() {
 }
 
 /* -------------------------------------------
-   AJOUT AU PANIER
-------------------------------------------- */
-function addToCartAndRedirect() {
-  const build = getCurrentBuild();
-  const ok = Object.values(build.components).some(c => c.price > 0);
-  if (!ok) {
-    alert("Sélectionnez au moins un composant !");
-    return;
-  }
-  const cart = JSON.parse(localStorage.getItem("pc4u_cart") || "[]");
-  cart.push({ id: Date.now(), ...build });
-  localStorage.setItem("pc4u_cart", JSON.stringify(cart));
-  window.location.href = "./Shopping-cart.html";
+  HELPERS API / TOKEN
+--------------------------------------------*/
+function getApiBase() {
+  return (window.PC4UAuth && PC4UAuth.API_BASE) || 'http://localhost:8080';
+}
+function getToken() {
+  return (window.PC4UAuth && PC4UAuth.getToken && PC4UAuth.getToken()) || 
+    localStorage.getItem('pc4u_token');
 }
 
+/* -------------------------------------------
+   AJOUT AU PANIER
+------------------------------------------- */
+async function addToCartAndRedirect() {
+  //récupération du build
+  const build = getCurrentBuild();
+  //récupération du product_id pour les composants
+  const productIds = [];
+  document.querySelectorAll("tr[data-component]").forEach(row => {
+    const key = row.dataset.component;
+    if (!dbCategoryMap[key]) return;
+
+    const select = row.querySelector(".component-select");
+    const val = select.value;
+    if (!val) return;
+
+    const pid = Number(val);
+    if (!Number.isNaN(pid)) {
+      productIds.push(pid);
+    }
+  });
+
+  if (productIds.length === 0) {
+    alert("Sélectionnez au moins un composant");
+    return;
+  }
+
+  const base = getApiBase();
+  const token = getToken();
+
+  if (!token) {
+    alert("Connectez-vous pour accéder au configurateur");
+    window.location.href = "./login.html"
+    return;
+  }
+
+  try {
+    //Ajout des composants dans Cart
+    for (const pid of productIds) {
+      const res = await fetch(`${base}/api/cart`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          product_id: pid,
+          quantity: 1
+        })
+      });
+    
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || data.detail || 'Erreur pendant ajout');
+      }
+    }
+    window.location.href = "./shopping-cart.html";
+  } catch (err) {
+  console.error("Erreur ajout de configuration", err);
+  alert(err.message);
+  }
+}
+/*--------------------------------------------
+    AJOUTER AU PANIER
+--------------------------------------------*/
 const addToCartStaticBtn = document.getElementById("add-to-cart-btn");
 if (addToCartStaticBtn) {
-  addToCartStaticBtn.addEventListener("click", addToCartAndRedirect);
+  addToCartStaticBtn.addEventListener("click", () => {
+    addToCartAndRedirect();
+  });
 }
 
 /* -------------------------------------------
@@ -223,14 +285,17 @@ async function fetchProductsForComponent(key) {
 
   try {
     const res = await fetch(
-      `/api/products/configurator?category=${encodeURIComponent(category)}`,
+      `/api/products/configurator`,
       { credentials: "include" }
     );
     const data = await res.json();
     if (!res.ok) throw data;
 
+    //Ne garder que les produits de la bonne catégorie
+    const filtered = data.filter(p => p.category_name === category);
+
     // on normalise
-    return data.map(p => ({
+    return filtered.map(p => ({
       id: p.product_id,
       name: p.product_name,
       price: Number(p.product_price) || 0
