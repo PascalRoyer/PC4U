@@ -12,7 +12,7 @@ const { connectDB } = require('./db');
 const authRoutes = require('./routes/auth');
 const prebuiltRoutes = require('./routes/prebuilt');
 const productsRoutes = require('./routes/products');
-// ❌ NE PAS METTRE ÇA : const configuratorRoutes = require('./routes/configurator');
+const cartRoutes = require('./routes/cart');
 
 const app = express();
 
@@ -24,6 +24,7 @@ app.use(
   })
 );
 app.use(express.json());
+app.use('/api/cart', cartRoutes);
 
 // Connexion à la base SQL Server
 connectDB();
@@ -36,7 +37,7 @@ app.get('/api/health', (_, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/prebuilt', prebuiltRoutes);
 app.use('/api/products', productsRoutes);
-// ❌ NE PAS METTRE ÇA : app.use('/api/configurator', configuratorRoutes);
+app.use('/api/cart', cartRoutes);
 
 // Frontend statique
 const FRONTEND_DIR = path.join(__dirname, '../../frontend');

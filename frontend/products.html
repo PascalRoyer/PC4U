@@ -187,6 +187,7 @@
         <div class="form-field">
           <label for="resolution">Résolution</label>
           <select id="resolution">
+            <option value="">Toutes</option>
             <option value="1024x768">1024x768</option>
             <option value="1280x1024">1280x1024</option>
             <option value="1360x768">1360x768</option>
@@ -224,6 +225,7 @@
         <div class="form-field">
           <label for="paneltype">Type de panneau</label>
           <select id="paneltype">
+            <option value="">Tous</option>
             <option value="AHVA">AHVA</option>
             <option value="IPS">IPS</option>
             <option value="Mini LED">Mini LED</option>
@@ -242,6 +244,7 @@
         <div class="form-field">
           <label for="aspectratio">Rapport d'écran</label>
           <select id="aspectratio">
+            <option value="">Tous</option>
             <option value="11:06">11:06</option>
             <option value="12:05">12:05</option>
             <option value="16:09">16:09</option>
@@ -266,6 +269,7 @@
         <div class="form-field">
           <label for="modules">Modules (GB)</label>
           <select id="modules">
+            <option value="">Tout type</option>
             <option value="1x1">1x1</option>
             <option value="1x16">1x16</option>
             <option value="1x2">1x2</option>
@@ -322,6 +326,7 @@
         <div class="form-field">
           <label for="hddtype">Type</label>
           <select id="hddtype">
+            <option value="">Tout type</option>
             <option value="Desktop">Bureau</option>
             <option value="Portable">Portable</option>
           </select>
@@ -329,6 +334,7 @@
         <div class="form-field">
           <label for="interface">Interface</label>
           <select id="interface">
+            <option value="">Tout type</option>
             <option value="USB Type-A 3.2 Gen 1">USB Type-A 3.2 Gen 1</option>
             <option value="USB Type-C 3.2 Gen 2">USB Type-C 3.2 Gen 2</option>
             <option value="USB Type-C 3.2 Gen 2x2">USB Type-C 3.2 Gen 2x2</option>
@@ -355,6 +361,7 @@
         <div class="form-field">
           <label for="pstype">Type</label>
           <select id="pstype">
+            <option value="">Tous</option>
             <option value="ATX">ATX</option>
             <option value="Flex ATX">Flex ATX</option>
             <option value="Mini ITX">Mini ITX</option>
@@ -364,6 +371,7 @@
         <div class="form-field">
           <label for="efficiency">Efficience</label>
           <select id="efficiency">
+            <option value="">Toutes</option>
             <option value="bronze">bronze</option>
             <option value="gold">gold</option>
             <option value="platinum">platinum</option>
@@ -379,6 +387,7 @@
         <div class="form-field">
           <label for="modular">Modularité</label>
           <select id="modular">
+            <option value="">Toutes</option>
             <option value="FALSE">Non modulaire</option>
             <option value="Full">Entièrement modulaire</option>
             <option value="Full/Side">Entièrement modulaire, câbles latéraux</option>
@@ -392,6 +401,7 @@
         <div class="form-field">
           <label for="casetype">Type de boîtier</label>
           <select id="casetype">
+            <option value="">Tous</option>
             <option value="ATX Desktop">ATX Desktop</option>
             <option value="ATX Full Tower">ATX Full Tower</option>
             <option value="ATX Mid Tower">ATX Mid Tower</option>
@@ -409,6 +419,7 @@
         <div class="form-field">
           <label for="sidepanel">Panneau latéral</label>
           <select id="sidepanel">
+            <option value="">Tous</option>
             <option value="Acrylic">Acrylic</option>
             <option value="Mesh">Mesh</option>
             <option valiue="SECC">SECC</option>
@@ -432,6 +443,7 @@
         <div class="form-field">
           <label for="socket">Socket</label>
           <select id="socket">
+            <option value="">Tout type</option>
             <option value="2 x LGA2011-3">2 x LGA2011-3</option>
             <option value="2 x LGA2011-3 Narrow">2 x LGA2011-3 Narrow</option>
             <option value="AM1">AM1</option>
@@ -469,6 +481,7 @@
         <div class="form-field">
           <label for="formfactor">Format</label>
           <select id="formfactor">
+            <option value="">Tout type</option>
             <option value="ATX">ATX</option>
             <option value="EATX">EATX</option>
             <option value="Micro ATX">Micro ATX</option>
@@ -482,6 +495,7 @@
         <div class="form-field">
           <label for="maxmemory">Mémoire maximale (Go)</label>
           <select id="maxmemory">
+            <option value="">Toutes</option>
             <option value="4">4</option>
             <option value="8">8</option>
             <option value="16">16</option>
@@ -501,6 +515,7 @@
         <div class="form-field">
           <label for="memoryslots">Slots mémoire</label>
           <select id="memoryslots">
+            <option value="">Toutes</option>
             <option value="2">2</option>
             <option value="4">4</option>
             <option value="6">6</option>
@@ -821,10 +836,56 @@
           </h3>
           <p>${categoryText}</p>
           <div class="price">${priceText}</div>
-          <button class="btn btn-primary">Ajouter</button>
+          <button class="btn btn-primary btn-add-cart" data-product-id="${prod.product_id}">Ajouter</button>
         `;
 
         productGrid.appendChild(card);
+      });
+    }
+    async function addToCart(productId) {
+      try {
+        const token = (window.PC4UAuth && PC4UAuth.getToken && PC4UAuth.getToken()) ||
+          localStorage.getItem('pc4u_token');
+
+        if (!token) {
+          alert('Connectez-vous pour ajouter des produits au panier.');
+          window.location.href = './login.html';
+          return;
+        }
+        const base = (window.PC4UAuth && PC4UAuth.API_BASE) || 'http://localhost:8080';
+
+        const res = await fetch(`${base}/api/cart`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            product_id: productId,
+            quantity: 1
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Erreur lors de l’ajout au panier');
+        }
+        alert('Produit ajouté au panier');
+      } catch (err) {
+        console.error('addToCart error:', err);
+        alert(err.message);
+      }
+    }
+    if (productGrid) {
+      productGrid.addEventListener('click', (e) => {
+        const btn = e.target.closest('.btn-add-cart');
+        if (!btn) return;
+
+        const productId = Number(btn.dataset.productId);
+        if (!productId) return;
+
+        addToCart(productId);
       });
     }
   </script>
