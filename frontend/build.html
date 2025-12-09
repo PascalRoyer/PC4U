@@ -49,9 +49,10 @@
           <button id="save-template-btn" class="template-btn">
             ➕ Ajouter un template
           </button>
-        </div>
+          
         <button reset class="template-btn" onclick="location.reload();">🔄 Réinitialiser</button>
 
+        </div>
 
         <table class="config-table">
           <thead>
@@ -113,7 +114,7 @@ const componentList = {
   cpu: { label: "CPU", icon: "./assets/img/build/CPU.png" },
   motherboard: { label: "Carte mère", icon: "./assets/img/build/Motherboard.png" },
   ram: { label: "RAM", icon: "./assets/img/build/RAM.png" },
-  storage: { label: "Stockage", icon: "./assets/img/build/SSD.png" },
+  storage: { label: "Stockage", icon: "./assets/img/build/Stockage.png" },
   gpu: { label: "GPU", icon: "./assets/img/build/GPU.png" },
   psu: { label: "Alimentation", icon: "./assets/img/build/PSU.png" },
   case: { label: "Boîtier", icon: "./assets/img/build/Case.png" },
@@ -154,86 +155,24 @@ function getCurrentBuild() {
 }
 
 /* -------------------------------------------
-  HELPERS API / TOKEN
---------------------------------------------*/
-function getApiBase() {
-  return (window.PC4UAuth && PC4UAuth.API_BASE) || 'http://localhost:8080';
-}
-function getToken() {
-  return (window.PC4UAuth && PC4UAuth.getToken && PC4UAuth.getToken()) || 
-    localStorage.getItem('pc4u_token');
-}
-
-/* -------------------------------------------
    AJOUT AU PANIER
 ------------------------------------------- */
-async function addToCartAndRedirect() {
-  //récupération du build
+function addToCartAndRedirect() {
   const build = getCurrentBuild();
-  //récupération du product_id pour les composants
-  const productIds = [];
-  document.querySelectorAll("tr[data-component]").forEach(row => {
-    const key = row.dataset.component;
-    if (!dbCategoryMap[key]) return;
-
-    const select = row.querySelector(".component-select");
-    const val = select.value;
-    if (!val) return;
-
-    const pid = Number(val);
-    if (!Number.isNaN(pid)) {
-      productIds.push(pid);
-    }
-  });
-
-  if (productIds.length === 0) {
-    alert("Sélectionnez au moins un composant");
+  const ok = Object.values(build.components).some(c => c.price > 0);
+  if (!ok) {
+    alert("Sélectionnez au moins un composant !");
     return;
   }
-
-  const base = getApiBase();
-  const token = getToken();
-
-  if (!token) {
-    alert("Connectez-vous pour accéder au configurateur");
-    window.location.href = "./login.html"
-    return;
-  }
-
-  try {
-    //Ajout des composants dans Cart
-    for (const pid of productIds) {
-      const res = await fetch(`${base}/api/cart`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          product_id: pid,
-          quantity: 1
-        })
-      });
-    
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        throw new Error(data.error || data.detail || 'Erreur pendant ajout');
-      }
-    }
-    window.location.href = "./shopping-cart.html";
-  } catch (err) {
-  console.error("Erreur ajout de configuration", err);
-  alert(err.message);
-  }
+  const cart = JSON.parse(localStorage.getItem("pc4u_cart") || "[]");
+  cart.push({ id: Date.now(), ...build });
+  localStorage.setItem("pc4u_cart", JSON.stringify(cart));
+  window.location.href = "./Shopping-cart.html";
 }
-/*--------------------------------------------
-    AJOUTER AU PANIER
---------------------------------------------*/
+
 const addToCartStaticBtn = document.getElementById("add-to-cart-btn");
 if (addToCartStaticBtn) {
-  addToCartStaticBtn.addEventListener("click", () => {
-    addToCartAndRedirect();
-  });
+  addToCartStaticBtn.addEventListener("click", addToCartAndRedirect);
 }
 
 /* -------------------------------------------
@@ -249,8 +188,14 @@ function generateRows() {
     row.dataset.component = key;
     row.innerHTML = `
       <td>
-        <img src="${c.icon}" class="icon-build"> ${c.label}
-      </td>
+  <div class="icon-build-wrapper">
+    <span class="icon-build">
+      <img src="${c.icon}" alt="${c.label}">
+    </span>
+    <span class="icon-build-label">${c.label}</span>
+  </div>
+</td>
+
       <td>
         <input
           type="text"
@@ -285,17 +230,14 @@ async function fetchProductsForComponent(key) {
 
   try {
     const res = await fetch(
-      `/api/products/configurator`,
+      `/api/products/configurator?category=${encodeURIComponent(category)}`,
       { credentials: "include" }
     );
     const data = await res.json();
     if (!res.ok) throw data;
 
-    //Ne garder que les produits de la bonne catégorie
-    const filtered = data.filter(p => p.category_name === category);
-
     // on normalise
-    return filtered.map(p => ({
+    return data.map(p => ({
       id: p.product_id,
       name: p.product_name,
       price: Number(p.product_price) || 0
