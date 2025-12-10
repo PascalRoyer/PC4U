@@ -1,5 +1,23 @@
-//URL du site
-const API_BASE = 'http://localhost:8080';
+// URL du site / API
+// - En dev local: backend sur http://localhost:8080
+// - En prod / ngrok: on utilise l'origine de la page (https://xxxxx.ngrok-free.app)
+const API_BASE = (function () {
+    const origin = window.location.origin;
+
+  // Si on est sur une URL ngrok (présentation)
+    if (origin.includes('ngrok-free.app')) {
+        return origin;            // ex: https://pc4u-demo.ngrok-free.app
+    }
+
+  // Si on sert tout via Express sur 8080 (http://localhost:8080/...)
+    if (origin.includes('localhost:8080') || origin.includes('127.0.0.1:8080')) {
+        return origin;
+    }
+
+  // Sinon, fallback dev classique: backend sur 8080
+    return 'http://localhost:8080';
+})();
+
 
 //Helpers token et user
 function saveAuth(token, user) {

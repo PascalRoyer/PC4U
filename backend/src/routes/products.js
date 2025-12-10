@@ -3,33 +3,6 @@ const express = require('express');
 const { sql } = require('../db');
 
 const router = express.Router();
-// ------------------------------------------------------
-// GET /api/products/configurator
-// Renvoie uniquement les produits utilisés dans le configurateur
-// ------------------------------------------------------
-router.get('/configurator', async (req, res) => {
-  try {
-    const request = new sql.Request();
-
-    const result = await request.query(`
-      SELECT 
-        p.product_id,
-        p.product_name,
-        p.product_price,
-        p.category_id,
-        c.category_name
-      FROM Products p
-      JOIN Categories c ON p.category_id = c.category_id
-      WHERE p.product_price > 0  -- on ignore les produits sans prix
-      ORDER BY p.product_name;
-    `);
-
-    res.json(result.recordset);
-  } catch (err) {
-    console.error('GET /api/products/configurator error:', err);
-    res.status(500).json({ error: 'Erreur serveur', detail: err.message });
-  }
-});
 
 // ------------------------------------------------------
 // GET /api/products  -> liste des produits (recherche simple)
@@ -123,7 +96,7 @@ router.get('/filter', async (req, res) => {
 
   try {
     const request = new sql.Request();
-    request.timeout = 60000;
+    request.requestTimeout = 60000;
 
     let joins = 'LEFT JOIN Categories c ON p.category_id = c.category_id';
     let where = '1 = 1';
@@ -397,68 +370,35 @@ router.get('/filter', async (req, res) => {
 // GET /api/products/configurator  -> pour le configurateur
 // ------------------------------------------------------
 router.get('/configurator', async (req, res) => {
-  try {
-    const request = new sql.Request();
-    request.requestTimeout = 60000;
+    const { category } = req.query;
 
-    const result = await request.query(`
-      SELECT
-        p.product_id,
-        p.product_name,
-        p.product_price,
-        p.image_url,
-        c.category_name
-      FROM Products p
-      JOIN Categories c ON p.category_id = c.category_id
-      WHERE p.product_price IS NOT NULL
-        AND p.product_price > 0
-      ORDER BY c.category_name, p.product_price;
-    `);
+    try {
+        const request = new sql.Request();
+        request.requestTimeout = 60000;
 
-    const rows = result.recordset;
-
-    // Structure comme dans ton ancien componentsDB
-    const grouped = {
-      cpu: [],
-      gpu: [],
-      ram: [],
-      storage: [],
-      psu: [],
-      case: [],
-      monitor: [],
-      motherboard: [],
-      cooler: [],
-      os: [],
-    };
-
-    const mapCategory = {
-      CPU: 'cpu',
-      GPU: 'gpu',
-      Memory_RAM: 'ram',
-      Storage: 'storage',
-      Power_supply: 'psu',
-      Cases: 'case',
-      Monitors: 'monitor',
-      Motherboards: 'motherboard',
-    };
-
-    rows.forEach((p) => {
-      const key = mapCategory[p.category_name];
-      if (!key) return;
-
-      grouped[key].push({
-        id: p.product_id,
-        name: p.product_name,
-        price: Number(p.product_price),
-        image_url: p.image_url || null,
-      });
-    });
-
-    res.json(grouped);
-  } catch (err) {
-    console.error('GET /api/products/configurator error:', err);
-    res.status(500).json({ error: 'Erreur serveur', detail: err.message });
-  }
+        let query = `
+            SELECT
+                p.product_id,
+                p.product_name,
+                p.product_price,
+                p.image_url,
+                c.category_name
+            FROM Products p
+            JOIN Categories c ON p.category_id = c.category_id
+            WHERE p.product_price IS NOT NULL
+                AND p.product_price > 0
+        `;
+        if (category) {
+            query += ` AND c.category_name = @cat`;
+            request.input('cat', sql.NVarChar, category);
+        }
+        query += ` ORDER BY p.product_name;`;
+        const result = await request.query(query);
+        res.json(result.recordset);
+    } catch (err) {
+        console.error('GET api/products/configurator error', err);
+        res.status(500).json({ error: 'Erreur serveur', detail: err.message });
+    }
 });
 
 // ------------------------------------------------------

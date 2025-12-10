@@ -19,10 +19,16 @@ const app = express();
 // Middlewares
 app.use(
   cors({
-    origin: 'http://localhost:8080', // ton frontend
+    origin: (origin, callback) => {
+      // Autoriser aussi les requêtes sans origin (Postman, curl, etc.)
+      if (!origin) return callback(null, true);
+
+      return callback(null, true);
+    },
     credentials: true,
   })
 );
+
 app.use(express.json());
 app.use('/api/cart', cartRoutes);
 
