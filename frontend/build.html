@@ -250,8 +250,12 @@ function generateRows() {
     row.dataset.component = key;
     row.innerHTML = `
       <td>
-        <img src="${c.icon}" class="icon-build"> ${c.label}
-      </td>
+      <div class="icon-build-wrapper">
+        <span class="icon-build">
+          <img src="${c.icon}" alt="${c.label}">
+        </span>
+        <span class="icon-build-label>"${c.icon}</span>
+      </div>
       <td>
         <input
           type="text"
