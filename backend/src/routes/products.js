@@ -57,7 +57,7 @@ router.get('/', async (req, res) => {
         c.category_name
       FROM Products p
       LEFT JOIN Categories c ON p.category_id = c.category_id
-      WHERE ${where}
+      WHERE ${where} AND p.image_url IS NOT NULL
       ORDER BY p.product_name;
     `);
 
@@ -130,7 +130,7 @@ router.get('/filter', async (req, res) => {
 
     // ----------------- Filtre catégorie -----------------
     if (category) {
-      where += ' AND c.category_name = @category';
+      where += ' AND c.category_name = @category AND p.image_url IS NOT NULL';
       request.input('category', sql.NVarChar, category);
     }
 
