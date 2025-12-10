@@ -284,18 +284,16 @@ async function fetchProductsForComponent(key) {
   }
 
   try {
+    const base = getApiBase();
     const res = await fetch(
-      `/api/products/configurator`,
+      `${base}/api/products/configurator?category=${encodeURIComponent(category)}`,
       { credentials: "include" }
     );
     const data = await res.json();
     if (!res.ok) throw data;
 
-    //Ne garder que les produits de la bonne catégorie
-    const filtered = data.filter(p => p.category_name === category);
-
     // on normalise
-    return filtered.map(p => ({
+    return data.map(p => ({
       id: p.product_id,
       name: p.product_name,
       price: Number(p.product_price) || 0
@@ -311,16 +309,24 @@ async function fetchProductsForComponent(key) {
    INITIALISATION DES SELECTS
 ------------------------------------------- */
 async function initDropdowns() {
-  const selects = document.querySelectorAll(".component-select");
+  const selects = Array.from(document.querySelectorAll(".component-select"));
 
-  for (const select of selects) {
-    const key = select.dataset.component;
-    const items = await fetchProductsForComponent(key);
+  // 1) Préparer les clés de composant
+  const keys = selects.map(sel => sel.dataset.component);
+
+  // 2) Lancer toutes les requêtes en PARALLÈLE
+  const results = await Promise.all(
+    keys.map(key => fetchProductsForComponent(key))
+  );
+
+  // 3) Remplir chaque <select> avec ses résultats
+  selects.forEach((select, index) => {
+    const items = results[index] || [];
 
     items.forEach(i => {
       const opt = document.createElement("option");
-      opt.value = i.id != null ? String(i.id) : i.name; // id si DB, sinon nom
-      opt.textContent = i.name;                         // seulement le nom
+      opt.value = i.id != null ? String(i.id) : i.name;
+      opt.textContent = i.name;
       opt.dataset.price = i.price ?? 0;
       select.appendChild(opt);
     });
@@ -330,9 +336,8 @@ async function initDropdowns() {
       select.closest("tr").querySelector(".price").textContent = `$${p}`;
       updateTotal();
     };
-  }
+  });
 }
-
 /* -------------------------------------------
    RECHERCHE DANS LES LISTES
 ------------------------------------------- */
@@ -517,23 +522,63 @@ function initDeleteButtons() {
 /* -------------------------------------------
    APPLIQUER TEMPLATE DANS LE UI
 ------------------------------------------- */
+/* -------------------------------------------
+   APPLIQUER TEMPLATE DANS LE UI
+------------------------------------------- */
 function applyTemplateToUI(components) {
   document.querySelectorAll("tr[data-component]").forEach(row => {
-    const c = components[row.dataset.component];
-    if (!c) return;
+    const key  = row.dataset.component;
+    const conf = components[key];
 
-    const select = row.querySelector("select");
+    const select    = row.querySelector("select.component-select");
+    const priceCell = row.querySelector(".price");
+
+    // 1) Réinitialiser la ligne
+    select.selectedIndex = 0;
+    priceCell.textContent = "$0";
+
+    // 2) Si le template n'a rien pour ce composant, on laisse vide
+    if (!conf) return;
+
+    const targetName  = conf.selected;
+    const targetPrice = Number(conf.price);
+
+    let matchedIndex = -1;
+
+    // 3) D'abord : chercher une option qui matche nom + prix
     Array.from(select.options).forEach((opt, i) => {
-      // on compare avec le texte (nom du produit)
-      if (opt.textContent === c.selected) {
-        select.selectedIndex = i;
-        row.querySelector(".price").textContent = `$${c.price}`;
+      if (i === 0) return; // on ignore "Ajouter ..."
+      const optName  = opt.textContent;
+      const optPrice = Number(opt.dataset.price || 0);
+      if (optName === targetName && optPrice === targetPrice && matchedIndex === -1) {
+        matchedIndex = i;
       }
     });
+
+    // 4) Si rien trouvé, on essaye nom seul
+    if (matchedIndex === -1) {
+      Array.from(select.options).forEach((opt, i) => {
+        if (i === 0) return;
+        if (opt.textContent === targetName && matchedIndex === -1) {
+          matchedIndex = i;
+        }
+      });
+    }
+
+    // 5) Si on a trouvé une option, on la sélectionne
+    if (matchedIndex !== -1) {
+      select.selectedIndex = matchedIndex;
+      const p = Number(select.options[matchedIndex].dataset.price || 0);
+      priceCell.textContent = `$${p}`;
+    } else {
+      // sinon, on laisse la ligne vide
+      select.selectedIndex = 0;
+      priceCell.textContent = "$0";
+    }
   });
+
   updateTotal();
 }
-
 /* -------------------------------------------
    INIT
 ------------------------------------------- */
