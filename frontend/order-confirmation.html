@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PC4U – Confirmation</title>
+  <link rel="stylesheet" href="./style/style.css" />
+  <style>
+    .confirm-wrap { max-width:880px; margin:48px auto; padding:20px; text-align:center; }
+    .order-card { background: rgba(17,24,39,0.8); padding:18px; border-radius:12px; border:1px solid rgba(148,163,184,0.06); }
+    .order-item { text-align:left; margin-top:12px; color:var(--text-muted); }
+    .btn-primary { background: linear-gradient(90deg,#4f46e5,#8b5cf6); color:#fff; border:none; padding:10px 16px; border-radius:12px; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="header-brand" href="./index.html">
+        <img src="./assets/img/log3.png" alt="PC4U" />
+        
+      </a>
+      <nav class="nav">
+       <nav class="nav">
+        <a href="./build.html">Configurateur</a>
+        <a href="./products.html">Produits</a>
+        <a href="./Shopping-cart.html">Panier</a>
+        <a href="./login.html">Log in</a>
+        <a href="./register.html">Register</a>
+        
+      </nav>
+      </nav>
+    </div>
+  </header>
+
+  <main class="confirm-wrap">
+    <div class="order-card">
+      <h1>Commande confirmée</h1>
+      <p id="orderMsg">Merci,votre commande a bien été prise en compte.</p>
+
+      <div id="orderDetails" style="margin-top:12px;"></div>
+
+      <div style="margin-top:18px;">
+        <button id="backHome" class="btn-primary">Retour à l'accueil</button>
+      </div>
+    </div>
+  </main>
+
+  <footer>© PC4U — Tous droits réservés.</footer>
+
+  <script>
+    const order = JSON.parse(localStorage.getItem('pc4u_last_order') || 'null');
+    if (!order) {
+      document.getElementById('orderMsg').textContent = 'Aucune commande à afficher.';
+    } else {
+      const container = document.getElementById('orderDetails');
+      container.innerHTML = `
+        <p><strong>Numéro de commande:</strong> ${order.order_id}</p>
+        <p><strong>Date:</strong> ${new Date(order.created_at).toLocaleString()}</p>
+        <p><strong>Total:</strong> ${order.total} $</p>
+      `;
+      order.items.forEach((entry, i) => {
+        const div = document.createElement('div');
+        div.className = 'order-item';
+        const comps = Object.entries(entry.components).map(([k,v]) => `<li>${k}: ${v.name} — ${v.price > 0 ? v.price + ' $' : '-'}</li>`).join('');
+        div.innerHTML = `<h4>Configuration ${i+1} — ${new Date(entry.created_at).toLocaleString()}</h4><ul>${comps}</ul>`;
+        container.appendChild(div);
+      });
+      
+    }
+
+    document.getElementById('backHome').addEventListener('click', () => {
+      window.location.href = './index.html';
+    });
+  </script>
+</body>
+</html>  

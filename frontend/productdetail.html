@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PC4U - Détails de produit</title>
+    <link rel="stylesheet" href="./style/style.css" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a class="header-brand" href="./index.html">
+                <img src="./assets/img/log3.png" alt="PC4U" />
+                <span>PC4U</span>
+            </a>
+            <nav class="nav">
+                <a href="./index.html">Accueil</a>
+                <a href="./build.html">Configurateur</a>
+                <a href="./products.html" aria-current="page">Produits</a>
+                <a href="./login.html">Connexion</a>
+                <a href="./register.html">Inscription</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="productdetail">
+        <section id="productInfo" class="card"></section>
+        <section id="productSpecs" class="card"></section>
+    </main>
+
+    <footer>© <span id="year"></span> PC4U — Tous droits réservés.</footer>
+
+    <script src="./js/auth.js"></script>
+    <script>
+        document.getElementById('year').textContent = new Date().getFullYear();
+        
+        document.addEventListener("DOMContentLoaded", async () => {
+            await PC4UAuth.requireAuth();
+
+            const API_BASE = window.PC4UAuth.API_BASE;
+
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            if (!id) {
+                document.getElementById('productInfo').innerHTML =
+                    "<p>Produit introuvable, id manquant.</p>";
+                return;
+            }
+            try {
+                const res = await fetch(`${API_BASE}/api/products/${id}`);
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.error || "Erreur lors du chargement du produit");
+                }
+
+                const { product, specs } = data;
+                renderProduct(product);
+                renderSpecs(product, specs);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('productInfo').innerHTML =
+                    `<p style="color:red">${err.message}</p>`;
+            }
+        });
+
+        function renderProduct(p) {
+            const container = document.getElementById('productInfo');
+            container.innerHTML = `
+            <div class="product-header">
+                <img src="${p.image_url || './assets/img/default.png'}"
+                    alt="${p.product_name}" />
+                <div>
+                    <h1>${p.product_name}</h1>
+                    <p>Catégorie : ${p.category_name}</p>
+                    <p class="price">
+                        ${p.product_price != null ? p.product_price + " $" : "Prix non défini"}
+                    </p>
+                </div>
+            </div>
+            `;
+        }
+        function renderSpecs(product, specs) {
+            const container = document.getElementById('productSpecs');
+
+        if (!specs) {
+            container.innerHTML = "<p>Aucune spécification détaillée pour ce produit.</p>";
+            return;
+        }
+
+        let rows = "";
+
+        switch (product.category_name) {
+            case 'CPU':
+                rows = `
+                    <tr><th>Cœurs :</th><td>${specs.core_count}</td></tr>
+                    <tr><th>Core clock (GHz) :</th><td>${specs.core_clock_ghz}</td></tr>
+                    <tr><th>Boost clock (GHz) :</th><td>${specs.boost_clock_ghz}</td></tr>
+                    <tr><th>Microarchitecture :</th><td>${specs.microarchitecture}</td></tr>
+                    <tr><th>TDP (W) :</th><td>${specs.tdp_watts}</td></tr>
+                    <tr><th>IGP :</th><td>${specs.graphics || "—"}</td></tr>
+                `;
+                break;
+            
+            case 'GPU':
+                rows = `
+                    <tr><th>Mémoire :</th><td>${specs.memory}</td></tr>
+                    <tr><th>Core clock (GHz) :</th><td>${specs.core_clock}</td></tr>
+                    <tr><th>Boost clock (GHz) :</th><td>${specs.boost_clock}</td></tr>
+                    <tr><th>Couleur :</th><td>${specs.color}</td></tr>
+                    <tr><th>Longueur :</th><td>${specs.length}</td></tr>
+                `;
+                break;
+
+            case 'Monitors':
+                rows = `
+                    <tr><th>Taille d'écran :</th><td>${specs.screen_size}</td></tr>
+                    <tr><th>Résolution :</th><td>${specs.resolution}</td></tr>
+                    <tr><th>Rafraîchissement :</th><td>${specs.refresh_rate}</td></tr>
+                    <tr><th>Temps de réponse :</th><td>${specs.response_time}</td></tr>
+                    <tr><th>Type de dalle :</th><td>${specs.panel_type}</td></tr>
+                    <tr><th>Format d'image :</th><td>${specs.aspect_ratio}</td></tr>
+                `;
+                break;
+            
+            case 'Memory_RAM':
+                rows = `
+                    <tr><th>Vitesse (MT/s) :</th><td>${specs.speed}</td></tr>
+                    <tr><th>Modules :</th><td>${specs.modules}</td></tr>
+                    <tr><th>Couleur :</th><td>${specs.color}</td></tr>
+                    <tr><th>Latence de premier mot :</th><td>${specs.first_word_latency}</td></tr>
+                    <tr><th>Latence CAS :</th><td>${specs.cas_latency}</td></tr>
+                `;
+                break;
+            
+            case 'Storage':
+                rows = `
+                    <tr><th>Type :</th><td>${specs.type}</td></tr>
+                    <tr><th>Interface :</th><td>${specs.interface}</td></tr>
+                    <tr><th>Capacité :</th><td>${specs.capacity}</td></tr>
+                    <tr><th>Couleur :</th><td>${specs.color}</td></tr>
+                `;
+                break;
+            
+            case 'Power_supply':
+                rows = `
+                    <tr><th>Type :</th><td>${specs.type}</td></tr>
+                    <tr><th>Efficacité :</th><td>${specs.efficiency}</td></tr>
+                    <tr><th>Puissance (W) :</th><td>${specs.wattage}</td></tr>
+                    <tr><th>Modularité :</th><td>${specs.modular}</td></tr>
+                    <tr><th>Couleur :</th><td>${specs.color}</td></tr>
+                `;
+                break;
+            
+            case 'Cases':
+                rows = `
+                    <tr><th>Type :</th><td>${specs.type}</td></tr>
+                    <tr><th>Couleur :</th><td>${specs.color}</td></tr>
+                    <tr><th>Panneau latéral :</th><td>${specs.side_panel}</td></tr>
+                    <tr><th>Volume externe (L) :</th><td>${specs.external_volume}</td></tr>
+                    <tr><th>Baies internes 3.5 :</th><td>${specs.internal_35_bays}</td></tr>
+                `;
+                break;
+            
+            case 'Motherboards':
+                rows = `
+                    <tr><th>Socket :</th><td>${specs.socket}</td></tr>
+                    <tr><th>Format :</th><td>${specs.form_factor}</td></tr>
+                    <tr><th>Mémoire max :</th><td>${specs.max_memory}</td></tr>
+                    <tr><th>Slots mémoire :</th><td>${specs.memory_slots}</td></tr>
+                    <tr><th>Couleur :</th><td>${specs.color}</td></tr>
+                `;
+                break;
+            
+            default:
+                rows = `<tr><td colspan="2">Specs disponibles mais catégorie non gérée.</td></tr>`;
+            }
+
+        container.innerHTML = `
+            <h2>Spécifications</h2>
+            <table class="specs-table">
+                <tbody>
+                    ${rows}
+                </tbody>
+            </table>
+            `;
+        }
+    </script>
+</body>
+</html>

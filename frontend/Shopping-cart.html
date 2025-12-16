@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PC4U – Panier</title>
+  <link rel="stylesheet" href="./style/style.css" />
+  <link rel="stylesheet" href="./style/style_build.css" />
+  <style>
+    /* small overrides for cart layout */
+    .cart-container { max-width: 980px; margin: 36px auto; padding: 18px; }
+    .cart-item { background: rgba(17,24,39,0.7); border: 1px solid rgba(148,163,184,0.06); padding: 14px; border-radius: 12px; margin-bottom: 12px; }
+    .cart-item h4 { margin: 0 0 8px; font-size: 16px; }
+    .cart-grid { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; }
+    .comp-list { font-size: 14px; color: var(--text-muted); margin: 0; padding-left: 14px; }
+    .cart-actions { display:flex; gap:10px; align-items:center; }
+    .btn-ghost { background: transparent; border:1px solid rgba(255,255,255,0.06); color: #fff; padding:8px 12px; border-radius:8px; cursor:pointer; }
+    .btn-primary { background: linear-gradient(90deg,#4f46e5,#8b5cf6); color:#fff; border:none; padding:10px 16px; border-radius:12px; cursor:pointer; }
+    .empty { text-align:center; color:var(--text-muted); padding:40px 0; }
+  </style>
+</head>
+<body>
+   <header class="site-header">
+    <div class="header-inner">
+      <a class="header-brand" href="./index.html">
+        <img src="./assets/img/log3.png" alt="PC4U" />
+        
+      </a>
+      <nav class="nav">
+       <nav class="nav">
+        <a href="./build.html">Configurateur</a>
+        <a href="./products.html">Produits</a>
+        <a href="./Shopping-cart.html">Panier</a>
+        <a href="./login.html">Log in</a>
+        <a href="./register.html">Register</a>
+        
+      </nav>
+      </nav>
+    </div>
+  </header>
+
+  <main class="cart-container">
+    <h1>Panier</h1>
+    <div id="cartList"></div>
+
+    <div id="cartSummary" style="text-align:right; margin-top:16px;">
+      <strong>Total : </strong><span id="cartTotal">0 $</span>
+    </div>
+
+    <div style="margin-top:18px; display:flex; gap:12px; justify-content:flex-end;">
+      <button id="clearCartBtn" class="btn-ghost">Vider le panier</button>
+      <button id="confirmOrderBtn" class="btn-primary">Confirmer la commande</button>
+    </div>
+  </main>
+
+  <footer>© PC4U — Tous droits réservés.</footer>
+
+  <script src="./js/auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1) Exiger que l'utilisateur soit connecté
+      if (window.PC4UAuth && PC4UAuth.requireAuth) {
+        await PC4UAuth.requireAuth();
+      }
+
+      // 2) Charger le panier au démarrage
+      await loadCart();
+
+      // 3) Bouton "Vider le panier"
+      const clearBtn = document.getElementById('clearCartBtn');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', async () => {
+          if (!confirm('Vider le panier ?')) return;
+          await clearCart();
+          await loadCart();
+        });
+      }
+
+      // 4) Bouton "Confirmer la commande"
+      const confirmBtn = document.getElementById('confirmOrderBtn');
+      if (confirmBtn) {
+        confirmBtn.addEventListener('click', async () => {
+          if (!confirm('Confirmer la commande et valider le panier ?')) return;
+
+          const base = getApiBase();
+          const token = getToken();
+          if (!token) {
+            alert('Veuillez vous connecter.');
+            window.location.href = './login.html';
+            return;
+          }
+
+          try {
+            const res = await fetch(`${base}/api/cart/checkout`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            });
+
+            const data = await res.json().catch(() => ({}));
+
+            if(!res.ok) {
+              throw new Error(data.error || data.detail || 'Erreur lors de la validation de la commande.');
+            }
+            //Stockage temporaire pour une page de confirmation
+            localStorage.setItem('pc4u_last_transaction', JSON.stringify(data));
+
+            alert(`Commande confirmée ! Numéro de transaction : ${data.transaction_id}`);
+            // Recharger le panier (qui doit être vide maintenant)
+            await loadCart();
+
+            // Tu peux aussi rediriger vers une page de confirmation dédiée :
+            // window.location.href = './order-confirmation.html';
+          } catch (err) {
+            console.error('Erreur checkout:', err);
+            alert(err.message);
+          }
+        });
+      }
+    });
+
+    function getApiBase() {
+      return (window.PC4UAuth && PC4UAuth.API_BASE) || 'http://localhost:8080';
+    }
+
+    function getToken() {
+      return (window.PC4UAuth && PC4UAuth.getToken && PC4UAuth.getToken()) ||
+            localStorage.getItem('pc4u_token');
+    }
+
+    async function loadCart() {
+      const base  = getApiBase();
+      const token = getToken();
+
+      if (!token) {
+        alert('Veuillez vous connecter.');
+        window.location.href = './login.html';
+        return;
+      }
+
+      try {
+        const res = await fetch(`${base}/api/cart`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const items = await res.json();
+        renderCart(items);
+      } catch (err) {
+        console.error('Erreur chargement panier:', err);
+        renderCart([]);
+      }
+    }
+
+    function renderCart(items) {
+      const container = document.getElementById('cartList');
+      const totalSpan = document.getElementById('cartTotal');
+
+      if (!container || !totalSpan) return;
+
+      container.innerHTML = '';
+
+      if (!Array.isArray(items) || items.length === 0) {
+        container.innerHTML = '<div class="empty">Votre panier est vide. Ajoutez des produits depuis la page Produits.</div>';
+        totalSpan.textContent = '0 $';
+        return;
+      }
+
+      let grandTotal = 0;
+
+      items.forEach((it) => {
+        const price = Number(it.product_price || 0);
+        const qty   = Number(it.quantity || 1);
+        const lineTotal = price * qty;
+        grandTotal += lineTotal;
+
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <div class="cart-grid">
+            <div>
+              <h4>${it.product_name}</h4>
+              <p class="comp-list">
+                Quantité : ${qty}<br/>
+                Prix unitaire : ${price.toFixed(2)} $
+              </p>
+            </div>
+            <div class="cart-actions">
+              <strong style="margin-right:12px;">${lineTotal.toFixed(2)} $</strong>
+              <button class="btn-ghost remove-btn" data-cart-id="${it.cart_id}">Supprimer</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+
+      totalSpan.textContent = grandTotal.toFixed(2) + ' $';
+
+      // brancher les boutons "Supprimer"
+      container.querySelectorAll('.remove-btn').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const cartId = Number(btn.dataset.cartId);
+          if (!cartId) return;
+          await removeCartItem(cartId);
+          await loadCart();
+        });
+      });
+    }
+
+  async function removeCartItem(cartId) {
+    const base  = getApiBase();
+    const token = getToken();
+    if (!token) return;
+
+    try {
+      await fetch(`${base}/api/cart/${cartId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+    } catch (err) {
+      console.error('Erreur suppression ligne panier:', err);
+    }
+  }
+
+  async function clearCart() {
+    const base  = getApiBase();
+    const token = getToken();
+    if (!token) return;
+
+    try {
+      await fetch(`${base}/api/cart`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+    } catch (err) {
+      console.error('Erreur vidage panier:', err);
+    }
+  }
+</script>
+
+</body>
+</html>

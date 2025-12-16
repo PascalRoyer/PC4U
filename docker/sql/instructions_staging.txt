@@ -1,0 +1,87 @@
+Ici sont détaillées les instructions pour insérer les fichiers csv dans votre base de données
+
+1. Structure générale
+    Chaque table doit utiliser uniquement des NVARCHAR avec des longueurs larges,
+    permettre des NULL et aucune clé primaire.
+    CREATE TABLE dbo.Staging_Monitors (
+        name NVARCHAR(MAX) NULL,
+        price NVARCHAR(100) NULL,
+        screen_size NVARCHAR(100) NULL,
+        resolution NVARCHAR(400) NULL,
+        refresh_rate NVARCHAR(50) NULL,
+        response_time NVARCHAR(50) NULL,
+        panel_type NVARCHAR(200) NULL,
+        aspect_ratio NVARCHAR(50) NULL
+    );
+2. Importation des datasets
+    Pour certain datasets, il sera nécessaire de les prétraiter pour que l'Importation
+    se fasse sans accroche. C'est déjà fait, donc il faudra utiliser memory_semicolon.csv 
+    au lieu de memory.csv et monitor_semicolor.csv au lieu de monitor.csv
+
+    2.1 Première méthode: BULK INSERT
+        BULK INSERT dbo.Staging_Monitors
+        FROM 'C:\Datasets\monitors_semicolon.csv'
+        WITH (
+            FIRSTROW = 2,
+            FIELDTERMINATOR = ';',
+            ROWTERMINATOR = '0x0A',
+            CODEPAGE = '65001',
+            FIELDQUOTE = '"',
+            TABLOCK,
+            KEEPNULLS
+        );
+        Si le fichier est xxxxx_semicolon.csv, utiliser FIELDQUOTE = ','
+
+    2.2 Deuxième méthode: SSIS
+        Clic droit sur PC4U dans SSMS > Tasks > Import Data > Data source
+        Choisir Flat file source > Sélectionner le fichier 
+        Pour le code page, le 1252 (ANSI Latin I) est correct, mais pour certains
+        fichiers il faudra sélectionner le 65001 (UTF-8).
+        Pour le text qualifier, utiliser " pour les fichiers semicolon ainsi que le
+        fichier external-hard-drive.csv.
+        Dans la section advanced, changer le data type de la colonne (généralement
+        le cas pour name) à Unicode string [DT WSTR] et l'output à >400. Pour le fichier
+        external hard drive encore une fois, include la colonne "interface" pour ces 
+        paramètres.
+        Choisir Microsoft OLE DB Provider for SQL Server et choisir PC4U comme 
+        bd puis changer le nom dans la table pour Staging_XXX tel que dans le init,
+        sinon un nouveau fichier sera créé.
+        Poursuivre jusqu'à l'insertion.
+
+    2.3 Corrections
+        Pour la table Staging_Monitors, la résolution sera mal formattée. utiliser
+        ce script pour les corriger:
+        UPDATE dbo.Staging_Monitors
+        SET resolution = 
+            CASE
+                WHEN resolution LIKE '19201080' THEN '1920x1080'
+                WHEN resolution LIKE '25601440' THEN '2560x1440'
+                WHEN resolution LIKE '38402160' THEN '3840x2160'
+                WHEN resolution LIKE '51201440' THEN '5120x1440'
+                WHEN resolution LIKE '76802160' THEN '7680x2160'
+                WHEN resolution LIKE '38401600' THEN '3840x1600'
+                WHEN resolution LIKE '34401440' THEN '3440x1440'
+				WHEN resolution LIKE '25601024' THEN '2560x1024'
+				WHEN resolution LIKE '19201920' THEN '1920x1920'
+				WHEN resolution LIKE '20481536' THEN '2048x1536'
+				WHEN resolution LIKE '25602880' THEN '2560x2880'
+				WHEN resolution LIKE '38401080' THEN '3840x1080'
+				WHEN resolution LIKE '38401200' THEN '3840x1200'
+				WHEN resolution LIKE '38402560' THEN '3840x2560'
+				WHEN resolution LIKE '40962160' THEN '4096x2160'
+				WHEN resolution LIKE '51202880' THEN '5120x2880'
+                WHEN resolution LIKE '25601080' THEN '2560x1080'
+				WHEN resolution LIKE '25601600' THEN '2560x1600'
+                WHEN resolution LIKE '1360768' THEN '1360x768'
+                WHEN resolution LIKE '1366768' THEN '1366x768'
+                WHEN resolution LIKE '1024768' THEN '1024x768'
+				WHEN resolution LIKE '1440900' THEN '1440x900'
+				WHEN resolution LIKE '16801050' THEN '1680x1050'
+				WHEN resolution LIKE '51202160' THEN '5120x2160'
+				WHEN resolution LIKE '76804320' THEN '7680x4320'
+				WHEN resolution LIKE '1600900' THEN '1600x900'
+				WHEN resolution LIKE '19801080' THEN '1980x1080'
+				WHEN resolution LIKE '12801024' THEN '1280x1024'
+				WHEN resolution LIKE '19201200' THEN '1920x1200'
+                ELSE REPLACE(REPLACE(resolution, ',', ''), '"', '')
+        END;
