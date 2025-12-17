@@ -1,4 +1,4 @@
-# Architecture - < PC4U >
+# Architecture - <PC4U>
 
 ## 1. Contexte et objectifs
 - **Objectif du système** : Le but de PC4U est d'offrir une plateforme alternative pour l'achat et la configuration de 
@@ -86,59 +86,59 @@
 * SGBD : SQL Server Management Studio 20
 * Rôle : Stocke les utilisateurs, les produits, leurs spécifications, le panier, les transactions et les templates. 
 * Principales tables : Users
-                                user_id_number PRIMARY KEY,
-                                user_pseudo,
-                                email,
-                                user_password,
-                                register_date,
-                                user_type_id,
-                                FOREIGN KEY (user_type_id) REFERENCES UserTypes(user_type_id)
-                            Categories
-                                category_id PRIMARY KEY,
-                                category_name
-                            Products
-                                product_id PRIMARY KEY,
-                                product_name,
-                                category_id,
-                                product_price,
-                                stock,
-                                image_url,
-                                FOREIGN KEY (category_id) REFERENCES Categories(category_id)
-                            Cart
-                                cart_idPRIMARY KEY,
-                                user_id_number,
-                                product_id,
-                                quantity INT,
-                                FOREIGN KEY (user_id_number) REFERENCES Users(user_id_number),
-                                FOREIGN KEY (product_id) REFERENCES Products(product_id)
-                            Transactions
-                                transaction_idPRIMARY KEY,
-                                transaction_date,
-                                total_items,
-                                total_cost,
-                                user_id_number,
-                                FOREIGN KEY (user_id_number) REFERENCES Users(user_id_number)
-                            Transaction_Details
-                                details_idPRIMARY KEY,
-                                transaction_id,
-                                product_id,
-                                product_quantity,
-                                price_at_purchase,
-                                line_total,
-                                FOREIGN KEY (transaction_id) REFERENCES Transactions(transaction_id),
-                                FOREIGN KEY (product_id) REFERENCES Products(product_id)
-                            Tables de spécifications des produits
-                                CPU_Specs,
-                                GPU_Specs,
-                                Monitors_Specs,
-                                Memory_Specs,
-                                Hard_Drive_Specs,
-                                Power_supply_Specs,
-                                Case_Specs
-                                Motherboard_Specs,
-                            Tables des builds
-                                Templates,
-                                Template_Components
+    * user_id_number PK,
+    * user_pseudo,
+    * email,
+    * user_password,
+    * register_date,
+    * user_type_id,
+    * FK (user_type_id) REFERENCES UserTypes
+                        Categories
+    * category_id PRIMARY KEY,
+    * category_name
+                        Products
+    * product_id PRIMARY KEY,
+    * product_name,
+    * category_id,
+    * product_price,
+    * stock,
+    * image_url,
+    * FK (category_id) REFERENCES Categories
+                        Cart
+    * cart_idPRIMARY KEY,
+    * user_id_number,
+    * product_id,
+    * quantity INT,
+    * FK (user_id_number) REFERENCES Users,
+    * FK (product_id) REFERENCES Products
+                        Transactions
+    * transaction_idPRIMARY KEY,
+    * transaction_date,
+    * total_items,
+    * total_cost,
+    * user_id_number,
+    * FK (user_id_number) REFERENCES Users
+                        Transaction_Details
+    * details_idPRIMARY KEY,
+    * transaction_id,
+    * product_id,
+    * product_quantity,
+    * price_at_purchase,
+    * line_total,
+    * FK (transaction_id) REFERENCES Transactions,
+    * FK (product_id) REFERENCES Products
+                        Tables de spécifications des produits
+    * CPU_Specs,
+    * GPU_Specs,
+    * Monitors_Specs,
+    * Memory_Specs,
+    * Hard_Drive_Specs,
+    * Power_supply_Specs,
+    * Case_Specs
+    * Motherboard_Specs,
+                        Tables des builds
+    * Templates,
+    * Template_Components
 * Relations importantes :
             - Users <-> Cart <-> Produits
             - Users <-> Transactions <-> Transaction_Details
