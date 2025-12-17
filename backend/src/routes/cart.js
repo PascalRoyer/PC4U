@@ -166,7 +166,7 @@ router.post('/checkout', authMiddleware, async (req, res) => {
         });
 
         //Insertion dans la table Transactions et Transaction_details
-        request = new sql.Request();
+        request = new sql.Request(tx);
         request
             .input('uid', sql.BigInt, userId)
             .input('totalItems', sql.Int, totalItems)
