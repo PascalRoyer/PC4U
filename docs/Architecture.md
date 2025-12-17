@@ -18,11 +18,11 @@
 ### Diagrammes
 **Diagramme d'architecture haut niveau**
 
-    ![Architecture PC4U](Images/diagramme_architecture.png)
+![Architecture PC4U](Images/diagramme_architecture.png)
 
 **Diagramme de séquence: exemple de cas d'utilisation: Configurateur -> Panier**
 
-    ![Diagramme de séquence configurateur à panier](Images/diagramme_sequence_build_add_to_cart.png)
+![Diagramme de séquence configurateur à panier](Images/diagramme_sequence_build_add_to_cart.png)
 
 
 ## 3. Composants
