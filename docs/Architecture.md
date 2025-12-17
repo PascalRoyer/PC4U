@@ -29,14 +29,14 @@
 **3.1 Frontend**
 * Rôle : Affiche la vue du site à l'utilisateur et transforme à travers CSS. Affiche les pages et déclenche les actions(recherche, filtres, panier, login) et communique avec l'API backend avec fetch
 * Pages principales :
-            build.html (page de configuration et création de templates)
-            index.html (page d'entrée du site)
-            login.html (page de connexion pour utilisateur existant)
-            register.html (page de création de compte)
-            products.html (page montrant la liste des produits, permet d'accéder aux filtres)
-            productdetail.html (page accédée à travers products.html, donne les spécifications du produit)
-            shoppingcart.html (page du panier montrant les produits inclus dans la commande actuelle, avant qu'elle soit passée.)
-            orderconfirmation.html (page de confirmation de commande)
+    * build.html (page de configuration et création de templates)
+    * index.html (page d'entrée du site)
+    * login.html (page de connexion pour utilisateur existant)
+    * register.html (page de création de compte)
+    * products.html (page montrant la liste des produits, permet d'accéder aux filtres)
+    * productdetail.html (page accédée à travers products.html, donne les spécifications du produit)
+    * shoppingcart.html (page du panier montrant les produits inclus dans la commande actuelle, avant qu'elle soit passée.)
+    * orderconfirmation.html (page de confirmation de commande)
 * Gestion d'état (localStorage) :
             `pc4u_token` : JWT
             `pc4u_user` : infos utilisateur (JSON)
@@ -57,30 +57,29 @@
             **jsonwebtoken** (pour la création et validation des JWT)
             **cors, doteven et path**
 * Structure :
-            `backend/src/app.js` :
-                - configuration Express (CORS, JSON)
-                - montage des routes `/api/*`
-                - service du frontend statique via `express.static(...)`
-                - endpoint de santé `GET /api/health`
-            `backend/src/db.js` :
-                - connexion à SQL Server + export `sql` (pool/driver)
-            `backend/src/middleware/auth.js` :
-                - middleware de protection des routes via header
-            `Authorization: Bearer <token>` (validation `JWT_SECRET`)
-             `backend/src/routes/` :
-                - `auth.js` : login/register + endpoint `/me` (validation token)
-                - `products.js` : catalogue, filtres avancés, fiche produit + specs
-                - `cart.js` : CRUD panier + checkout (Transactions + Transaction_Details)
-                - `prebuilt.js` : templates (CRUD + chargement d’un template)
+    `backend/src/app.js` :
+    - configuration Express (CORS, JSON)
+    - montage des routes `/api/*`
+    - service du frontend statique via `express.static(...)`
+    - endpoint de santé `GET /api/health`
+    `backend/src/db.js` :
+    - connexion à SQL Server + export `sql` (pool/driver)
+    `backend/src/middleware/auth.js` :
+    - middleware de protection des routes via header
+    `Authorization: Bearer <token>` (validation `JWT_SECRET`)
+    `backend/src/routes/` :
+    - `auth.js` : login/register + endpoint `/me` (validation token)
+    - `products.js` : catalogue, filtres avancés, fiche produit + specs
+    - `cart.js` : CRUD panier + checkout (Transactions + Transaction_Details)
+    - `prebuilt.js` : templates (CRUD + chargement d’un template)
 * Validation des entrées :
-            - Vérification des paramètres requis (ex: `product_id` dans `POST /api/cart`,
-                `cartId` numérique dans `DELETE /api/cart/:cartId`)
-            - Nettoyage/conversion des types côté serveur (`Number(...)`, `parseInt(...)`)
-            - Requêtes SQL paramétrées via `.input(...)` pour réduire le risque d’injection SQL
+    - Vérification des paramètres requis (ex: `product_id` dans `POST /api/cart`, `cartId` numérique dans `DELETE /api/cart/:cartId`)
+    - Nettoyage/conversion des types côté serveur (`Number(...)`, `parseInt(...)`)
+    - Requêtes SQL paramétrées via `.input(...)` pour réduire le risque d’injection SQL
 * Gestion des erreurs et logs :
-            - `try/catch` dans les routes, log serveur via `console.error(...)`
-            - Réponses JSON d’erreur: `{ error: "...", detail: err.message }`
-            - 404 renvoyé en JSON pour les routes inconnues (`{ error: 'Route introuvable' }`)
+    - `try/catch` dans les routes, log serveur via `console.error(...)`
+    - Réponses JSON d’erreur: `{ error: "...", detail: err.message }`
+    - 404 renvoyé en JSON pour les routes inconnues (`{ error: 'Route introuvable' }`)
 
 **3.3 Base de données**
 * SGBD : SQL Server Management Studio 20
@@ -94,11 +93,11 @@
     * register_date,
     * user_type_id,
     * FK (user_type_id) REFERENCES UserTypes
-                        Categories
-    * category_id PRIMARY KEY,
+- Categories
+    * category_id PK,
     * category_name
-                        Products
-    * product_id PRIMARY KEY,
+- Products
+    * product_id PK,
     * product_name,
     * category_id,
     * product_price,
@@ -106,21 +105,21 @@
     * image_url,
     * FK (category_id) REFERENCES Categories
 - Cart
-    * cart_idPRIMARY KEY,
+    * cart_id PK,
     * user_id_number,
     * product_id,
     * quantity INT,
     * FK (user_id_number) REFERENCES Users,
     * FK (product_id) REFERENCES Products
 - Transactions
-    * transaction_idPRIMARY KEY,
+    * transaction_id PK,
     * transaction_date,
     * total_items,
     * total_cost,
     * user_id_number,
     * FK (user_id_number) REFERENCES Users
 - Transaction_Details
-    * details_idPRIMARY KEY,
+    * details_id PK,
     * transaction_id,
     * product_id,
     * product_quantity,
@@ -141,13 +140,13 @@
     * Templates,
     * Template_Components
 * Relations importantes :
-            - Users <-> Cart <-> Produits
-            - Users <-> Transactions <-> Transaction_Details
-            - Products <-> X_Specs
-            - Users <-> Templates <-> Template_Components
+    - Users <-> Cart <-> Produits
+    - Users <-> Transactions <-> Transaction_Details
+    - Products <-> X_Specs
+    - Users <-> Templates <-> Template_Components
 * Conventions et contraintes :
-            - Clés primaires IDENTITY permettant d'incrémenter automatiquement lors de l'ajout d'utilisateurs, produits, ou paniers
-            - Contraintes
-                prix >= 0
-                stock >= 0
-                quantité >= 0
+    - Clés primaires IDENTITY permettant d'incrémenter automatiquement lors de l'ajout d'utilisateurs, produits, ou paniers
+    - Contraintes
+        * prix >= 0
+        * stock >= 0
+        * quantité >= 0
