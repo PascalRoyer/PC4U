@@ -1,4 +1,4 @@
-# Definition of Done (DoD) – Projet PC4U
+# Definition of Done (DoD)  Projet PC4U
 
 ## 1. Objectif du document
 
