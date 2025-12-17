@@ -85,7 +85,8 @@
 **3.3 Base de données**
 * SGBD : SQL Server Management Studio 20
 * Rôle : Stocke les utilisateurs, les produits, leurs spécifications, le panier, les transactions et les templates. 
-* Principales tables : Users
+* Principales tables :
+    Users
     * user_id_number PK,
     * user_pseudo,
     * email,
