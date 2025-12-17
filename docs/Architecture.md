@@ -86,7 +86,7 @@
 * SGBD : SQL Server Management Studio 20
 * Rôle : Stocke les utilisateurs, les produits, leurs spécifications, le panier, les transactions et les templates. 
 * Principales tables :
-    Users
+- Users
     * user_id_number PK,
     * user_pseudo,
     * email,
@@ -105,21 +105,21 @@
     * stock,
     * image_url,
     * FK (category_id) REFERENCES Categories
-                        Cart
+- Cart
     * cart_idPRIMARY KEY,
     * user_id_number,
     * product_id,
     * quantity INT,
     * FK (user_id_number) REFERENCES Users,
     * FK (product_id) REFERENCES Products
-                        Transactions
+- Transactions
     * transaction_idPRIMARY KEY,
     * transaction_date,
     * total_items,
     * total_cost,
     * user_id_number,
     * FK (user_id_number) REFERENCES Users
-                        Transaction_Details
+- Transaction_Details
     * details_idPRIMARY KEY,
     * transaction_id,
     * product_id,
@@ -128,7 +128,7 @@
     * line_total,
     * FK (transaction_id) REFERENCES Transactions,
     * FK (product_id) REFERENCES Products
-                        Tables de spécifications des produits
+- Tables de spécifications des produits
     * CPU_Specs,
     * GPU_Specs,
     * Monitors_Specs,
@@ -137,7 +137,7 @@
     * Power_supply_Specs,
     * Case_Specs
     * Motherboard_Specs,
-Tables des builds
+- Tables des builds
     * Templates,
     * Template_Components
 * Relations importantes :
