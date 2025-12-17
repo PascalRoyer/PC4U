@@ -1,4 +1,4 @@
-# Architecture - <PC4U>
+# Architecture - PC4U
 
 ## 1. Contexte et objectifs
 - **Objectif du système** : Le but de PC4U est d'offrir une plateforme alternative pour l'achat et la configuration de 
