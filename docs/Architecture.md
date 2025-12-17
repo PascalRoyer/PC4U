@@ -136,7 +136,7 @@
     * Power_supply_Specs,
     * Case_Specs
     * Motherboard_Specs,
-                        Tables des builds
+Tables des builds
     * Templates,
     * Template_Components
 * Relations importantes :
